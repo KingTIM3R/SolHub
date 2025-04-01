@@ -40,23 +40,23 @@ local SOLHub = {
         UICorner = 4,
         
         -- Element properties
-        ElementHeight = 38,                              -- Increased element height
-        ElementPadding = 8,                              -- Increased padding for more space
+        ElementHeight = 40,                              -- Taller elements for better spacing
+        ElementPadding = 12,                             -- Increased padding between elements
         ElementCorner = 3,                               -- Slightly rounder corners
         
         -- Section properties
-        SectionPadding = 10,                             -- Reduced section padding
-        SectionGap = 20,                                 -- Gap between sections
+        SectionPadding = 15,                             -- Increased section padding
+        SectionGap = 25,                                 -- Larger gap between sections
         
         -- Tab properties
         TabHeight = 40,
         TabWidth = 160,                                  -- Fixed width for tabs
-        TabPadding = 8,                                  -- Padding between tabs
+        TabPadding = 10,                                 -- Increased padding between tabs
         TabsLeftPadding = 20,                            -- Left padding for tab text
         
         -- Window padding
-        WindowPadding = 15,
-        ContentPadding = 10,                             -- Padding for content
+        WindowPadding = 20,                              -- Increased window padding
+        ContentPadding = 15,                             -- Increased content padding
         
         -- Animation properties
         AnimationDuration = 0.25,                        -- Slightly faster animations
@@ -1154,7 +1154,7 @@ function SOLHub:CreateWindow(config)
                     Name = "Arrow",
                     Parent = Dropdown,
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(1, -25, 0, 5),
+                    Position = UDim2.new(1, -25, 0, SOLHub.Configuration.ElementHeight/2 - 7.5),
                     Size = UDim2.new(0, 15, 0, 15),
                     Image = "rbxassetid://6031091004",
                     ImageColor3 = SOLHub.Theme.TextColor,
@@ -1465,30 +1465,34 @@ function SOLHub:CreateWindow(config)
                         end)
                         
                     elseif not dropdownConfig.MultiSelection and type(value) == "string" then
-                        -- Find the option and simulate a click
-                        for _, child in pairs(DropdownContent:GetChildren()) do
-                            if child:IsA("TextButton") and child.Text == value then
-                                -- Deselect all options
-                                for _, otherChild in pairs(DropdownContent:GetChildren()) do
-                                    if otherChild:IsA("TextButton") then
-                                        Tween(otherChild, {BackgroundColor3 = SOLHub.Theme.ElementBackground, TextColor3 = SOLHub.Theme.TextColor})
+                        -- Update the dropdown value directly without needing to access children
+                        DefaultOption = value
+                        DropdownSelection.Text = value
+                        
+                        -- Update flag and call callback
+                        if dropdownConfig.Flag then
+                            SOLHub.Flags[dropdownConfig.Flag] = value
+                        end
+                        task.spawn(function()
+                            dropdownConfig.Callback(value)
+                        end)
+                                
+                        -- Skip attempting to iterate through children in mock environment
+                        if DropdownContent.ClassName ~= "MockScrollingFrame" then
+                            -- Find the option and simulate a click
+                            for _, child in pairs(DropdownContent:GetChildren()) do
+                                if child:IsA("TextButton") and child.Text == value then
+                                    -- Deselect all options
+                                    for _, otherChild in pairs(DropdownContent:GetChildren()) do
+                                        if otherChild:IsA("TextButton") then
+                                            Tween(otherChild, {BackgroundColor3 = SOLHub.Theme.ElementBackground, TextColor3 = SOLHub.Theme.TextColor})
+                                        end
                                     end
+                                
+                                    -- Select this option
+                                    Tween(child, {BackgroundColor3 = SOLHub.Theme.AccentColor, TextColor3 = Color3.fromRGB(255, 255, 255)})
+                                    break
                                 end
-                                
-                                -- Select this option
-                                DefaultOption = value
-                                DropdownSelection.Text = value
-                                Tween(child, {BackgroundColor3 = SOLHub.Theme.AccentColor, TextColor3 = Color3.fromRGB(255, 255, 255)})
-                                
-                                -- Update flag and call callback
-                                if dropdownConfig.Flag then
-                                    SOLHub.Flags[dropdownConfig.Flag] = value
-                                end
-                                task.spawn(function()
-                                    dropdownConfig.Callback(value)
-                                end)
-                                
-                                break
                             end
                         end
                     end
@@ -1496,6 +1500,12 @@ function SOLHub:CreateWindow(config)
                 
                 function DropdownApi:Refresh(options, keepSelection)
                     dropdownConfig.Options = options
+                    
+                    -- Skip children manipulation in mock environment
+                    if DropdownContent.ClassName == "MockScrollingFrame" then
+                        -- Just update the options data
+                        return
+                    end
                     
                     -- Clear current options
                     for _, child in pairs(DropdownContent:GetChildren()) do
@@ -1527,7 +1537,11 @@ function SOLHub:CreateWindow(config)
                                 DefaultOption = option
                             end
                         end
-                        AddOption(option)
+                        
+                        -- Skip AddOption in mock environment
+                        if DropdownContent.ClassName ~= "MockScrollingFrame" then
+                            AddOption(option)
+                        end
                     end
                     
                     -- Update selection text
