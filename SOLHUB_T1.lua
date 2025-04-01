@@ -504,7 +504,7 @@ function SOLHub:CreateWindow(config)
             TextXAlignment = Enum.TextXAlignment.Left
         })
         
-        -- Create Tab Content
+        -- Create Tab Content with enhanced scrolling
         local TabContent = CreateElement("ScrollingFrame", {
             Name = tabInfo.Name .. "Content",
             Parent = ContentContainer,
@@ -513,9 +513,30 @@ function SOLHub:CreateWindow(config)
             BorderSizePixel = 0,
             Size = UDim2.new(1, 0, 1, 0),
             CanvasSize = UDim2.new(0, 0, 0, 0),
-            ScrollBarThickness = 3,
+            ScrollBarThickness = 5, -- Thicker for better usability
             ScrollBarImageColor3 = SOLHub.Theme.AccentColor,
+            ScrollBarImageTransparency = 0.2, -- More visible scrollbar
+            -- Using pcall for compatibility with our mock environment
             Visible = false
+        })
+        
+        -- Try to apply advanced scroll properties if available (in real Roblox)
+        pcall(function()
+            TabContent.ScrollingDirection = Enum.ScrollingDirection.Y
+            TabContent.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
+            TabContent.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
+        end)
+        
+        -- Add cyberpunk-style scroll bar decoration
+        local ScrollBarDecoration = CreateElement("Frame", {
+            Name = "ScrollBarDecoration",
+            Parent = TabContent,
+            BackgroundColor3 = SOLHub.Theme.AccentColor,
+            BackgroundTransparency = 0.8,
+            BorderSizePixel = 0,
+            Position = UDim2.new(1, -6, 0, 0),
+            Size = UDim2.new(0, 1, 1, 0),
+            ZIndex = 2
         })
         
         local ElementList = CreateElement("UIListLayout", {
@@ -575,7 +596,9 @@ function SOLHub:CreateWindow(config)
             sectionConfig = sectionConfig or {}
             local sectionInfo = {
                 Name = sectionConfig.Name or "Section",
-                ContentPadding = sectionConfig.ContentPadding or SOLHub.Configuration.ElementPadding
+                ContentPadding = sectionConfig.ContentPadding or SOLHub.Configuration.ElementPadding,
+                Collapsible = sectionConfig.Collapsible ~= nil and sectionConfig.Collapsible or true, -- Default to collapsible
+                Collapsed = sectionConfig.Collapsed or false -- Default to expanded
             }
             
             local SectionContainer = CreateElement("Frame", {
@@ -592,12 +615,22 @@ function SOLHub:CreateWindow(config)
                 CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
             })
             
-            local SectionTitle = CreateElement("TextLabel", {
-                Name = "Title",
+            -- Create the title bar with cyberpunk style
+            local SectionTitleBar = CreateElement("Frame", {
+                Name = "TitleBar",
                 Parent = SectionContainer,
                 BackgroundTransparency = 1,
+                Position = UDim2.new(0, 0, 0, 0),
+                Size = UDim2.new(1, 0, 0, 40),
+                ZIndex = 4
+            })
+            
+            local SectionTitle = CreateElement("TextLabel", {
+                Name = "Title",
+                Parent = SectionTitleBar,
+                BackgroundTransparency = 1,
                 Position = UDim2.new(0, 10, 0, 5),
-                Size = UDim2.new(1, -20, 0, 30),
+                Size = UDim2.new(1, -50, 0, 30), -- Leave space for dropdown icon
                 Font = SOLHub.Configuration.TextFont,
                 Text = sectionInfo.Name,
                 TextColor3 = SOLHub.Theme.TextColor,
@@ -605,13 +638,30 @@ function SOLHub:CreateWindow(config)
                 TextXAlignment = Enum.TextXAlignment.Left
             })
             
+            -- Dropdown arrow for collapsible sections
+            local DropdownArrow = nil
+            if sectionInfo.Collapsible then
+                DropdownArrow = CreateElement("TextLabel", {
+                    Name = "DropdownArrow",
+                    Parent = SectionTitleBar,
+                    BackgroundTransparency = 1,
+                    Position = UDim2.new(1, -30, 0, 5),
+                    Size = UDim2.new(0, 20, 0, 30),
+                    Font = Enum.Font.Code, -- Use monospace font for better arrow characters
+                    Text = sectionInfo.Collapsed and "▼" or "▲", -- Triangle pointing down when collapsed
+                    TextColor3 = SOLHub.Theme.AccentColor,
+                    TextSize = SOLHub.Configuration.TextSize + 4,
+                    TextXAlignment = Enum.TextXAlignment.Center
+                })
+            end
+            
             -- Cyberpunk-style neon line under section title
             local SectionNeonLine = CreateElement("Frame", {
                 Name = "NeonLine",
-                Parent = SectionTitle,
+                Parent = SectionTitleBar,
                 BackgroundColor3 = SOLHub.Theme.AccentColor,
                 BorderSizePixel = 0,
-                Position = UDim2.new(0, 0, 1, 0),
+                Position = UDim2.new(0, 10, 1, -2),
                 Size = UDim2.new(0, 30, 0, 1),
                 ZIndex = 3
             })
@@ -628,12 +678,14 @@ function SOLHub:CreateWindow(config)
                 ImageTransparency = 0.3
             })
             
+            -- Section content (will be hidden when collapsed)
             local SectionContent = CreateElement("Frame", {
                 Name = "Content",
                 Parent = SectionContainer,
                 BackgroundTransparency = 1,
                 Position = UDim2.new(0, 0, 0, 40),
-                Size = UDim2.new(1, 0, 0, 0)
+                Size = UDim2.new(1, 0, 0, 0),
+                Visible = not sectionInfo.Collapsed
                 -- AutomaticSize is mocked in the demo environment
             })
             
@@ -651,10 +703,72 @@ function SOLHub:CreateWindow(config)
                 Padding = UDim.new(0, sectionInfo.ContentPadding)
             })
             
-            -- Update Canvas Size when section content changes
-            SectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            -- Function to update section size based on content
+            local function UpdateSectionSize()
+                local contentSize = SectionLayout.AbsoluteContentSize.Y
+                if not sectionInfo.Collapsed and contentSize > 0 then
+                    SectionContainer.Size = UDim2.new(1, 0, 0, contentSize + 50) -- Title height + padding
+                else
+                    SectionContainer.Size = UDim2.new(1, 0, 0, 40) -- Just the title bar
+                end
                 UpdateCanvasSize()
-            end)
+            end
+            
+            -- Update Canvas Size when section content changes
+            SectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateSectionSize)
+            
+            -- Add click event to title bar for collapsing/expanding
+            if sectionInfo.Collapsible then
+                -- Create invisible button for better click handling
+                local TitleClickArea = CreateElement("TextButton", {
+                    Name = "TitleClickArea",
+                    Parent = SectionTitleBar,
+                    BackgroundTransparency = 1,
+                    Size = UDim2.new(1, 0, 1, 0),
+                    Text = "",
+                    ZIndex = 6
+                })
+                
+                -- Set up the toggle behavior
+                TitleClickArea.MouseButton1Click:Connect(function()
+                    sectionInfo.Collapsed = not sectionInfo.Collapsed
+                    
+                    -- Update the dropdown arrow
+                    if DropdownArrow then
+                        DropdownArrow.Text = sectionInfo.Collapsed and "▼" or "▲"
+                    end
+                    
+                    -- Toggle content visibility with animation
+                    SectionContent.Visible = not sectionInfo.Collapsed
+                    
+                    -- Update section size with animation
+                    UpdateSectionSize()
+                    
+                    -- Add a pulse effect to the neon line when toggled
+                    Tween(SectionNeonLine, {Size = UDim2.new(0, 60, 0, 1)}, 0.2)
+                    
+                    -- Use task.spawn to handle wait in a separate thread (for demo compatibility)
+                    task.spawn(function()
+                        wait(0.2)
+                        Tween(SectionNeonLine, {Size = UDim2.new(0, 30, 0, 1)}, 0.2)
+                    end)
+                end)
+                
+                -- Hover effect
+                TitleClickArea.MouseEnter:Connect(function()
+                    Tween(SectionTitle, {TextColor3 = SOLHub.Theme.AccentColor}, 0.2)
+                    if DropdownArrow then
+                        Tween(DropdownArrow, {TextTransparency = 0}, 0.2)
+                    end
+                end)
+                
+                TitleClickArea.MouseLeave:Connect(function()
+                    Tween(SectionTitle, {TextColor3 = SOLHub.Theme.TextColor}, 0.2)
+                    if DropdownArrow then
+                        Tween(DropdownArrow, {TextTransparency = 0.2}, 0.2)
+                    end
+                end)
+            end
             
             -- Section Methods
             local Section = {}
