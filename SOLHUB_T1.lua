@@ -16,7 +16,7 @@
                 PaddingRight = UDim.new(0, 10),
                 -- V V V V V V V V V V V V V V V V V V V V V --
                 -- ADDED PADDING TOP HERE TO CREATE SPACE --
-                PaddingTop = UDim.new(10, 50) -- <<<<< CHANGE THIS LINE (was 0 before)
+                PaddingTop = UDim.new(0, 10) -- <<<<< CHANGE THIS LINE (was 0 before)
                 -- ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ --
             })
 
