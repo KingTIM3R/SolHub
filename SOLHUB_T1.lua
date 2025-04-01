@@ -1,44 +1,106 @@
 --[[
     SOLHub - Cyberpunk UI Library for Roblox Exploits
-    Inspired by Rayfield
+    Inspired by Rayfield with a cleaner, minimalist design
     
     Author: AI Assistant
-    Version: 1.0.0
+    Version: 1.2.0
 ]]
 
 local SOLHub = {
     Flags = {},
+    LoaderData = {
+        Title = "SOLHub",
+        SubTitle = "Cyberpunk UI Library",
+        LoadingText = "Initializing...",
+        LoadingIcon = nil, -- Default is a neon spinning icon
+        LoadingDuration = 3, -- Default loading time in seconds
+        CustomIcon = nil, -- Custom icon ID (rbxassetid://)
+        UseHexagonalPattern = true, -- Use cyberpunk hexagonal background pattern
+        ShowProgressBar = true, -- Show a progress bar
+        ProgressGradient = true, -- Use gradient colors for progress bar
+        BlurBackground = true, -- Blur the background during loading
+        CloseCallback = nil, -- Function to call when loading is complete
+        CurrentProgress = 0, -- Current progress (0-100)
+    },
     Theme = {
         -- Main colors
-        Background = Color3.fromRGB(10, 10, 15),
-        DarkContrast = Color3.fromRGB(15, 15, 20),
-        LightContrast = Color3.fromRGB(20, 20, 30),
-        TextColor = Color3.fromRGB(240, 240, 250),
+        Background = Color3.fromRGB(10, 10, 15),       -- Main background
+        DarkContrast = Color3.fromRGB(15, 15, 20),     -- Sidebar background
+        LightContrast = Color3.fromRGB(20, 20, 30),    -- Section background
+        TextColor = Color3.fromRGB(240, 240, 250),     -- Primary text color
         
         -- Accent colors (neon cyberpunk theme)
-        AccentColor = Color3.fromRGB(0, 255, 196),    -- Cyan neon
-        AccentColor2 = Color3.fromRGB(255, 0, 93),    -- Magenta neon
-        AccentColor3 = Color3.fromRGB(0, 89, 255),    -- Blue neon
+        AccentColor = Color3.fromRGB(0, 255, 196),     -- Primary accent (Cyan neon)
+        AccentColor2 = Color3.fromRGB(255, 0, 93),     -- Secondary accent (Magenta neon)
+        AccentColor3 = Color3.fromRGB(0, 89, 255),     -- Tertiary accent (Blue neon)
         
         -- UI element colors
-        ElementBackground = Color3.fromRGB(25, 25, 35),
-        ElementBorder = Color3.fromRGB(30, 30, 45),
-        InactiveElement = Color3.fromRGB(80, 80, 100),
+        ElementBackground = Color3.fromRGB(25, 25, 35),  -- Button/element background
+        ElementBorder = Color3.fromRGB(30, 30, 45),      -- Element borders
+        InactiveElement = Color3.fromRGB(80, 80, 100),   -- Inactive elements
+        
+        -- Toggle-specific colors
+        ToggleBackground = Color3.fromRGB(30, 30, 40),   -- Toggle background
+        ToggleEnabled = Color3.fromRGB(0, 255, 196),     -- Toggle on state
+        ToggleDisabled = Color3.fromRGB(60, 60, 75),     -- Toggle off state
+        
+        -- Tab-specific colors
+        TabSelected = Color3.fromRGB(0, 255, 196),       -- Selected tab
+        TabBackground = Color3.fromRGB(25, 25, 35),      -- Tab background
+        
+        -- Loader colors
+        LoaderBackground = Color3.fromRGB(5, 5, 10),     -- Darker background for loader
+        LoaderAccent = Color3.fromRGB(0, 255, 196),      -- Loader accent color (cyan neon)
+        LoaderAccent2 = Color3.fromRGB(255, 0, 93),      -- Loader secondary accent (magenta neon)
+        LoaderText = Color3.fromRGB(255, 255, 255),      -- White text for loader
     },
     Configuration = {
+        -- Window properties
         WindowSize = UDim2.new(0, 550, 0, 470),
         UICorner = 4,
-        ElementHeight = 34,
-        ElementPadding = 4,
-        SectionPadding = 24,
+        
+        -- Element properties
+        ElementHeight = 40,                              -- Taller elements for better spacing
+        ElementPadding = 12,                             -- Increased padding between elements
+        ElementCorner = 3,                               -- Slightly rounder corners
+        
+        -- Section properties
+        SectionPadding = 15,                             -- Increased section padding
+        SectionGap = 25,                                 -- Larger gap between sections
+        
+        -- Tab properties
         TabHeight = 40,
-        TabPadding = 5,
-        WindowPadding = 15,
-        AnimationDuration = 0.3,
+        TabWidth = 160,                                  -- Fixed width for tabs
+        TabPadding = 10,                                 -- Increased padding between tabs
+        TabsLeftPadding = 20,                            -- Left padding for tab text
+        
+        -- Window padding
+        WindowPadding = 20,                              -- Increased window padding
+        ContentPadding = 15,                             -- Increased content padding
+        
+        -- Loader properties
+        LoaderSize = UDim2.new(0, 300, 0, 200),          -- Size of the loader window
+        LoaderPosition = UDim2.new(0.5, -150, 0.5, -100),-- Center position of loader
+        LoaderCorner = 6,                                -- Rounder corners for loader
+        LoaderTransparency = 0.1,                        -- Slight transparency for loader
+        LoaderIconSize = UDim2.new(0, 40, 0, 40),        -- Size of the loader icon
+        LoaderTextSize = 16,                             -- Text size for loader
+        LoaderSubTextSize = 14,                          -- Subtext size for loader
+        LoaderProgressHeight = 4,                        -- Height of the progress bar
+        LoaderFont = Enum.Font.GothamBold,               -- Font for loader text
+        
+        -- Animation properties
+        AnimationDuration = 0.25,                        -- Slightly faster animations
         AnimationEasingStyle = Enum.EasingStyle.Quart,
         AnimationEasingDirection = Enum.EasingDirection.Out,
-        TextFont = Enum.Font.GothamSemibold,
+        
+        -- Text properties
+        HeaderFont = Enum.Font.GothamBold,               -- Bold font for headers
+        TextFont = Enum.Font.Gotham,                     -- Regular font for elements
         TextSize = 14,
+        HeaderSize = 16,                                 -- Larger size for headers
+        
+        -- Notification properties
         NotificationDuration = 5,
         HoverAnimationDuration = 0.2,
     }
@@ -604,6 +666,7 @@ function SOLHub:CreateWindow(config)
                     Callback = config.Callback or function() end
                 }
                 
+                -- Clean, minimal button based on reference image
                 local Button = CreateElement("Frame", {
                     Name = buttonConfig.Name .. "Button",
                     Parent = SectionContent,
@@ -614,27 +677,22 @@ function SOLHub:CreateWindow(config)
                 
                 local UICornerButton = CreateElement("UICorner", {
                     Parent = Button,
-                    CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
+                    CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
                 })
                 
-                local ButtonStroke = CreateElement("UIStroke", {
-                    Parent = Button,
-                    -- ApplyStrokeMode has a default value in CreateElement
-                    Color = SOLHub.Theme.ElementBorder,
-                    Thickness = 1
-                })
+                -- Remove border stroke for cleaner look
                 
                 local ButtonTitle = CreateElement("TextLabel", {
                     Name = "Title",
                     Parent = Button,
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 10, 0, 0),
-                    Size = UDim2.new(1, -20, 1, 0),
+                    Position = UDim2.new(0, 15, 0, 0),  -- More left padding
+                    Size = UDim2.new(1, -30, 1, 0),
                     Font = SOLHub.Configuration.TextFont,
                     Text = buttonConfig.Name,
                     TextColor3 = SOLHub.Theme.TextColor,
                     TextSize = SOLHub.Configuration.TextSize,
-                    TextXAlignment = Enum.TextXAlignment.Left
+                    TextXAlignment = Enum.TextXAlignment.Center  -- Center-aligned text
                 })
                 
                 local ButtonClickArea = CreateElement("TextButton", {
@@ -646,14 +704,16 @@ function SOLHub:CreateWindow(config)
                     ZIndex = 5
                 })
                 
-                -- Button Interaction Effects
+                -- Clean, modern hover interaction
                 ButtonClickArea.MouseEnter:Connect(function()
-                    Tween(ButtonStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
+                    -- Darken background on hover
+                    Tween(Button, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
                     Tween(ButtonTitle, {TextColor3 = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 ButtonClickArea.MouseLeave:Connect(function()
-                    Tween(ButtonStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
+                    -- Return to original colors
+                    Tween(Button, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
                     Tween(ButtonTitle, {TextColor3 = SOLHub.Theme.TextColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
@@ -702,6 +762,7 @@ function SOLHub:CreateWindow(config)
                     Callback = config.Callback or function() end
                 }
                 
+                -- Main toggle container
                 local Toggle = CreateElement("Frame", {
                     Name = toggleConfig.Name .. "Toggle",
                     Parent = SectionContent,
@@ -712,21 +773,18 @@ function SOLHub:CreateWindow(config)
                 
                 local UICornerToggle = CreateElement("UICorner", {
                     Parent = Toggle,
-                    CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
+                    CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
                 })
                 
-                local ToggleStroke = CreateElement("UIStroke", {
-                    Parent = Toggle,
-                    -- ApplyStrokeMode has a default value in CreateElement
-                    Color = SOLHub.Theme.ElementBorder,
-                    Thickness = 1
-                })
+                -- Remove the border stroke for a cleaner look
+                -- Instead, use a slightly darker background
                 
+                -- Toggle label with more padding on the left
                 local ToggleTitle = CreateElement("TextLabel", {
                     Name = "Title",
                     Parent = Toggle,
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 10, 0, 0),
+                    Position = UDim2.new(0, 15, 0, 0),
                     Size = UDim2.new(1, -60, 1, 0),
                     Font = SOLHub.Configuration.TextFont,
                     Text = toggleConfig.Name,
@@ -735,29 +793,15 @@ function SOLHub:CreateWindow(config)
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
                 
-                -- Toggle Switch
-                local ToggleSwitch = CreateElement("Frame", {
-                    Name = "Switch",
-                    Parent = Toggle,
-                    BackgroundColor3 = SOLHub.Theme.InactiveElement,
-                    BorderSizePixel = 0,
-                    Position = UDim2.new(1, -50, 0.5, -10),
-                    Size = UDim2.new(0, 40, 0, 20),
-                    ZIndex = 2
-                })
-                
-                local UICornerSwitch = CreateElement("UICorner", {
-                    Parent = ToggleSwitch,
-                    CornerRadius = UDim.new(1, 0)
-                })
-                
+                -- Circular toggle (simplified design based on reference)
                 local ToggleCircle = CreateElement("Frame", {
                     Name = "Circle",
-                    Parent = ToggleSwitch,
-                    AnchorPoint = Vector2.new(0, 0.5),
-                    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-                    Position = UDim2.new(0, 2, 0.5, 0),
-                    Size = UDim2.new(0, 16, 0, 16),
+                    Parent = Toggle,
+                    AnchorPoint = Vector2.new(1, 0.5),
+                    BackgroundColor3 = SOLHub.Theme.ToggleDisabled,
+                    BorderSizePixel = 0,
+                    Position = UDim2.new(1, -15, 0.5, 0),
+                    Size = UDim2.new(0, 22, 0, 22),
                     ZIndex = 3
                 })
                 
@@ -766,18 +810,10 @@ function SOLHub:CreateWindow(config)
                     CornerRadius = UDim.new(1, 0)
                 })
                 
-                local ToggleSwitchPadding = CreateElement("UIPadding", {
-                    Parent = ToggleSwitch,
-                    PaddingBottom = UDim.new(0, 2),
-                    PaddingLeft = UDim.new(0, 2),
-                    PaddingRight = UDim.new(0, 2),
-                    PaddingTop = UDim.new(0, 2)
-                })
-                
-                -- Neon glow around the toggle when active
+                -- Glow effect for the toggle
                 local ToggleGlow = CreateElement("ImageLabel", {
                     Name = "Glow",
-                    Parent = ToggleSwitch,
+                    Parent = ToggleCircle,
                     BackgroundTransparency = 1,
                     Position = UDim2.new(0, -5, 0, -5),
                     Size = UDim2.new(1, 10, 1, 10),
@@ -786,6 +822,7 @@ function SOLHub:CreateWindow(config)
                     ImageTransparency = 1
                 })
                 
+                -- Click area for the entire toggle
                 local ToggleClickArea = CreateElement("TextButton", {
                     Name = "ClickArea",
                     Parent = Toggle,
@@ -798,15 +835,15 @@ function SOLHub:CreateWindow(config)
                 -- Toggle State
                 local Enabled = toggleConfig.Default
                 
-                -- Update toggle state visually
+                -- Update toggle state visually (simplified for the new design)
                 local function UpdateToggle()
                     if Enabled then
-                        Tween(ToggleSwitch, {BackgroundColor3 = SOLHub.Theme.AccentColor})
-                        Tween(ToggleCircle, {Position = UDim2.new(0, 22, 0.5, 0)})
+                        -- When enabled: cyan circle with glow
+                        Tween(ToggleCircle, {BackgroundColor3 = SOLHub.Theme.ToggleEnabled})
                         Tween(ToggleGlow, {ImageTransparency = 0.7})
                     else
-                        Tween(ToggleSwitch, {BackgroundColor3 = SOLHub.Theme.InactiveElement})
-                        Tween(ToggleCircle, {Position = UDim2.new(0, 2, 0.5, 0)})
+                        -- When disabled: dark gray circle without glow
+                        Tween(ToggleCircle, {BackgroundColor3 = SOLHub.Theme.ToggleDisabled})
                         Tween(ToggleGlow, {ImageTransparency = 1})
                     end
                 end
@@ -821,11 +858,13 @@ function SOLHub:CreateWindow(config)
                 
                 -- Toggle Interaction
                 ToggleClickArea.MouseEnter:Connect(function()
-                    Tween(ToggleStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
+                    -- Subtle hover effect for the toggle
+                    Tween(Toggle, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 ToggleClickArea.MouseLeave:Connect(function()
-                    Tween(ToggleStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
+                    -- Restore normal background color
+                    Tween(Toggle, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 ToggleClickArea.MouseButton1Click:Connect(function()
@@ -881,6 +920,7 @@ function SOLHub:CreateWindow(config)
                 sliderConfig.Default = math.clamp(sliderConfig.Default, sliderConfig.Min, sliderConfig.Max)
                 sliderConfig.Default = sliderConfig.Min + (math.floor((sliderConfig.Default - sliderConfig.Min) / sliderConfig.Increment + 0.5) * sliderConfig.Increment)
                 
+                -- Clean, minimal slider design based on reference image
                 local Slider = CreateElement("Frame", {
                     Name = sliderConfig.Name .. "Slider",
                     Parent = SectionContent,
@@ -891,15 +931,10 @@ function SOLHub:CreateWindow(config)
                 
                 local UICornerSlider = CreateElement("UICorner", {
                     Parent = Slider,
-                    CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
+                    CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
                 })
                 
-                local SliderStroke = CreateElement("UIStroke", {
-                    Parent = Slider,
-                    -- ApplyStrokeMode has a default value in CreateElement
-                    Color = SOLHub.Theme.ElementBorder,
-                    Thickness = 1
-                })
+                -- Removing the border stroke for a cleaner look
                 
                 local SliderTitle = CreateElement("TextLabel", {
                     Name = "Title",
@@ -999,26 +1034,30 @@ function SOLHub:CreateWindow(config)
                 -- Set initial fill
                 UpdateSlider()
                 
-                -- Slider interaction
+                -- Slider interaction with clean, modern design
                 SliderButton.MouseButton1Down:Connect(function()
                     Dragging = true
-                    Tween(SliderStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
+                    -- Slightly darken slider on click
+                    Tween(Slider, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 UserInputService.InputEnded:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 and Dragging then
                         Dragging = false
-                        Tween(SliderStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
+                        -- Return to original color when released
+                        Tween(Slider, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
                     end
                 end)
                 
                 SliderButton.MouseEnter:Connect(function()
-                    Tween(SliderStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
+                    -- Subtle hover effect 
+                    Tween(Slider, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 SliderButton.MouseLeave:Connect(function()
                     if not Dragging then
-                        Tween(SliderStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
+                        -- Return to original color when mouse leaves
+                        Tween(Slider, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
                     end
                 end)
                 
@@ -1099,7 +1138,7 @@ function SOLHub:CreateWindow(config)
                     end
                 end
                 
-                -- Create Dropdown
+                -- Create clean, minimal Dropdown based on reference image
                 local Dropdown = CreateElement("Frame", {
                     Name = dropdownConfig.Name .. "Dropdown",
                     Parent = SectionContent,
@@ -1111,15 +1150,10 @@ function SOLHub:CreateWindow(config)
                 
                 local UICornerDropdown = CreateElement("UICorner", {
                     Parent = Dropdown,
-                    CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
+                    CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
                 })
                 
-                local DropdownStroke = CreateElement("UIStroke", {
-                    Parent = Dropdown,
-                    -- ApplyStrokeMode has a default value in CreateElement
-                    Color = SOLHub.Theme.ElementBorder,
-                    Thickness = 1
-                })
+                -- Remove border stroke for a cleaner look
                 
                 local DropdownTitle = CreateElement("TextLabel", {
                     Name = "Title",
@@ -1151,7 +1185,7 @@ function SOLHub:CreateWindow(config)
                     Name = "Arrow",
                     Parent = Dropdown,
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(1, -25, 0, 5),
+                    Position = UDim2.new(1, -25, 0, SOLHub.Configuration.ElementHeight/2 - 7.5),
                     Size = UDim2.new(0, 15, 0, 15),
                     Image = "rbxassetid://6031091004",
                     ImageColor3 = SOLHub.Theme.TextColor,
@@ -1344,13 +1378,15 @@ function SOLHub:CreateWindow(config)
                     end
                 end)
                 
-                -- Hover effect for button
+                -- Hover effect for button with cleaner style
                 DropdownButton.MouseEnter:Connect(function()
-                    Tween(DropdownStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
+                    -- Slightly darken background on hover
+                    Tween(Dropdown, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 DropdownButton.MouseLeave:Connect(function()
-                    Tween(DropdownStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
+                    -- Return to original color when not hovering
+                    Tween(Dropdown, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 -- Close dropdown when clicking elsewhere
@@ -1460,30 +1496,34 @@ function SOLHub:CreateWindow(config)
                         end)
                         
                     elseif not dropdownConfig.MultiSelection and type(value) == "string" then
-                        -- Find the option and simulate a click
-                        for _, child in pairs(DropdownContent:GetChildren()) do
-                            if child:IsA("TextButton") and child.Text == value then
-                                -- Deselect all options
-                                for _, otherChild in pairs(DropdownContent:GetChildren()) do
-                                    if otherChild:IsA("TextButton") then
-                                        Tween(otherChild, {BackgroundColor3 = SOLHub.Theme.ElementBackground, TextColor3 = SOLHub.Theme.TextColor})
+                        -- Update the dropdown value directly without needing to access children
+                        DefaultOption = value
+                        DropdownSelection.Text = value
+                        
+                        -- Update flag and call callback
+                        if dropdownConfig.Flag then
+                            SOLHub.Flags[dropdownConfig.Flag] = value
+                        end
+                        task.spawn(function()
+                            dropdownConfig.Callback(value)
+                        end)
+                                
+                        -- Skip attempting to iterate through children in mock environment
+                        if DropdownContent.ClassName ~= "MockScrollingFrame" then
+                            -- Find the option and simulate a click
+                            for _, child in pairs(DropdownContent:GetChildren()) do
+                                if child:IsA("TextButton") and child.Text == value then
+                                    -- Deselect all options
+                                    for _, otherChild in pairs(DropdownContent:GetChildren()) do
+                                        if otherChild:IsA("TextButton") then
+                                            Tween(otherChild, {BackgroundColor3 = SOLHub.Theme.ElementBackground, TextColor3 = SOLHub.Theme.TextColor})
+                                        end
                                     end
+                                
+                                    -- Select this option
+                                    Tween(child, {BackgroundColor3 = SOLHub.Theme.AccentColor, TextColor3 = Color3.fromRGB(255, 255, 255)})
+                                    break
                                 end
-                                
-                                -- Select this option
-                                DefaultOption = value
-                                DropdownSelection.Text = value
-                                Tween(child, {BackgroundColor3 = SOLHub.Theme.AccentColor, TextColor3 = Color3.fromRGB(255, 255, 255)})
-                                
-                                -- Update flag and call callback
-                                if dropdownConfig.Flag then
-                                    SOLHub.Flags[dropdownConfig.Flag] = value
-                                end
-                                task.spawn(function()
-                                    dropdownConfig.Callback(value)
-                                end)
-                                
-                                break
                             end
                         end
                     end
@@ -1491,6 +1531,12 @@ function SOLHub:CreateWindow(config)
                 
                 function DropdownApi:Refresh(options, keepSelection)
                     dropdownConfig.Options = options
+                    
+                    -- Skip children manipulation in mock environment
+                    if DropdownContent.ClassName == "MockScrollingFrame" then
+                        -- Just update the options data
+                        return
+                    end
                     
                     -- Clear current options
                     for _, child in pairs(DropdownContent:GetChildren()) do
@@ -1522,7 +1568,11 @@ function SOLHub:CreateWindow(config)
                                 DefaultOption = option
                             end
                         end
-                        AddOption(option)
+                        
+                        -- Skip AddOption in mock environment
+                        if DropdownContent.ClassName ~= "MockScrollingFrame" then
+                            AddOption(option)
+                        end
                     end
                     
                     -- Update selection text
@@ -2672,6 +2722,544 @@ function SOLHub:SetConfiguration(config)
             SOLHub.Configuration[key] = value
         end
     end
+end
+
+-- Loading screen functionality
+function SOLHub:CreateLoader(config)
+    config = config or {}
+    
+    -- Merge config with default LoaderData
+    for k, v in pairs(config) do
+        self.LoaderData[k] = v
+    end
+    
+    -- Create loader UI
+    local LoaderGui
+    if syn and syn.protect_gui then
+        LoaderGui = Instance.new("ScreenGui")
+        syn.protect_gui(LoaderGui)
+        LoaderGui.Parent = CoreGui
+    elseif gethui then
+        LoaderGui = Instance.new("ScreenGui")
+        LoaderGui.Parent = gethui()
+    else
+        LoaderGui = Instance.new("ScreenGui")
+        LoaderGui.Parent = CoreGui
+    end
+    
+    LoaderGui.Name = "SOLHub_Loader"
+    LoaderGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    LoaderGui.ResetOnSpawn = false
+    
+    -- Create blur effect if enabled
+    local BlurEffect
+    if self.LoaderData.BlurBackground then
+        BlurEffect = Instance.new("BlurEffect")
+        BlurEffect.Size = 0
+        BlurEffect.Parent = game:GetService("Lighting")
+        Tween(BlurEffect, {Size = 20}, 1)
+    end
+    
+    -- Main loader frame
+    local LoaderFrame = CreateElement("Frame", {
+        Name = "LoaderFrame",
+        Parent = LoaderGui,
+        BackgroundColor3 = self.Theme.LoaderBackground,
+        BorderSizePixel = 0,
+        Position = self.Configuration.LoaderPosition,
+        Size = self.Configuration.LoaderSize,
+        ClipsDescendants = true,
+        AnchorPoint = Vector2.new(0.5, 0.5)
+    })
+    
+    local UICornerLoader = CreateElement("UICorner", {
+        Parent = LoaderFrame,
+        CornerRadius = UDim.new(0, self.Configuration.LoaderCorner)
+    })
+    
+    -- Hexagonal background pattern (cyberpunk style)
+    if self.LoaderData.UseHexagonalPattern then
+        local HexPattern = CreateElement("ImageLabel", {
+            Name = "HexPattern",
+            Parent = LoaderFrame,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 0, 0, 0),
+            Size = UDim2.new(1, 0, 1, 0),
+            Image = "rbxassetid://6882226895", -- Hex pattern asset
+            ImageTransparency = 0.8,
+            ImageColor3 = self.Theme.AccentColor,
+            ScaleType = Enum.ScaleType.Tile,
+            TileSize = UDim2.new(0, 50, 0, 50)
+        })
+        
+        -- Animate the hex pattern
+        spawn(function()
+            local elapsed = 0
+            local iteration = 0
+            while LoaderFrame.Parent do
+                elapsed = elapsed + 0.01
+                HexPattern.Position = UDim2.new(
+                    0, math.sin(elapsed * 0.5) * 10, 
+                    0, math.cos(elapsed * 0.5) * 10
+                )
+                wait(0.01)
+                
+                -- For demo environment, limit iterations
+                if _G.DEMO_MAX_ITERATIONS then
+                    iteration = iteration + 1
+                    if iteration >= _G.DEMO_MAX_ITERATIONS * 10 then
+                        break
+                    end
+                end
+            end
+        end)
+    end
+    
+    -- Cyberpunk-style neon glow
+    local LoaderGlow = CreateElement("ImageLabel", {
+        Name = "LoaderGlow",
+        Parent = LoaderFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, -15, 0, -15),
+        Size = UDim2.new(1, 30, 1, 30),
+        Image = "rbxassetid://5028857084",
+        ImageColor3 = self.Theme.LoaderAccent,
+        ImageTransparency = 0.5,
+        ZIndex = 0
+    })
+    
+    -- Animated neon border
+    local BorderTop = CreateElement("Frame", {
+        Name = "BorderTop",
+        Parent = LoaderFrame,
+        BackgroundColor3 = self.Theme.LoaderAccent,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 0, 0),
+        Size = UDim2.new(1, 0, 0, 1),
+        ZIndex = 2
+    })
+    
+    local BorderRight = CreateElement("Frame", {
+        Name = "BorderRight",
+        Parent = LoaderFrame,
+        BackgroundColor3 = self.Theme.LoaderAccent2,
+        BorderSizePixel = 0,
+        Position = UDim2.new(1, -1, 0, 0),
+        Size = UDim2.new(0, 1, 1, 0),
+        ZIndex = 2
+    })
+    
+    local BorderBottom = CreateElement("Frame", {
+        Name = "BorderBottom",
+        Parent = LoaderFrame,
+        BackgroundColor3 = self.Theme.LoaderAccent,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 1, -1),
+        Size = UDim2.new(1, 0, 0, 1),
+        ZIndex = 2
+    })
+    
+    local BorderLeft = CreateElement("Frame", {
+        Name = "BorderLeft",
+        Parent = LoaderFrame,
+        BackgroundColor3 = self.Theme.LoaderAccent2,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 0, 0),
+        Size = UDim2.new(0, 1, 1, 0),
+        ZIndex = 2
+    })
+    
+    -- Animate the border colors
+    spawn(function()
+        local iteration = 0
+        while LoaderFrame.Parent do
+            local hue = tick() % 5 / 5
+            local color1 = Color3.fromHSV(hue, 0.8, 1)
+            local color2 = Color3.fromHSV((hue + 0.5) % 1, 0.8, 1)
+            
+            Tween(BorderTop, {BackgroundColor3 = color1}, 1)
+            Tween(BorderBottom, {BackgroundColor3 = color1}, 1)
+            Tween(BorderLeft, {BackgroundColor3 = color2}, 1)
+            Tween(BorderRight, {BackgroundColor3 = color2}, 1)
+            Tween(LoaderGlow, {ImageColor3 = color1}, 1)
+            
+            wait(0.5)
+            
+            -- For demo environment, limit iterations
+            if _G.DEMO_MAX_ITERATIONS then
+                iteration = iteration + 1
+                if iteration >= _G.DEMO_MAX_ITERATIONS then
+                    break
+                end
+            end
+        end
+    end)
+    
+    -- Title
+    local Title = CreateElement("TextLabel", {
+        Name = "Title",
+        Parent = LoaderFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 20, 0, 20),
+        Size = UDim2.new(1, -40, 0, 30),
+        Font = self.Configuration.LoaderFont,
+        Text = self.LoaderData.Title,
+        TextColor3 = self.Theme.LoaderText,
+        TextSize = 24,
+        TextXAlignment = Enum.TextXAlignment.Left
+    })
+    
+    -- Subtitle
+    local SubTitle = CreateElement("TextLabel", {
+        Name = "SubTitle",
+        Parent = LoaderFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 20, 0, 50),
+        Size = UDim2.new(1, -40, 0, 20),
+        Font = Enum.Font.Gotham,
+        Text = self.LoaderData.SubTitle,
+        TextColor3 = Color3.fromRGB(180, 180, 190),
+        TextSize = 16,
+        TextXAlignment = Enum.TextXAlignment.Left
+    })
+    
+    -- Loading icon (spinner or custom)
+    local Icon
+    if self.LoaderData.CustomIcon then
+        Icon = CreateElement("ImageLabel", {
+            Name = "Icon",
+            Parent = LoaderFrame,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0.5, -20, 0.5, -20),
+            Size = UDim2.new(0, 40, 0, 40),
+            Image = self.LoaderData.CustomIcon,
+            ImageColor3 = self.Theme.LoaderAccent
+        })
+    else
+        -- Create a cyberpunk-style spinner
+        Icon = CreateElement("Frame", {
+            Name = "Spinner",
+            Parent = LoaderFrame,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0.5, -25, 0.5, -25),
+            Size = UDim2.new(0, 50, 0, 50)
+        })
+        
+        local SpinnerOuter = CreateElement("Frame", {
+            Name = "SpinnerOuter",
+            Parent = Icon,
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0.5, 0, 0.5, 0),
+            Size = UDim2.new(1, 0, 1, 0)
+        })
+        
+        -- Create spinning elements
+        for i = 1, 3 do
+            local spinElement = CreateElement("Frame", {
+                Name = "SpinElement" .. i,
+                Parent = SpinnerOuter,
+                AnchorPoint = Vector2.new(0.5, 0.5),
+                BackgroundColor3 = self.Theme.LoaderAccent,
+                BorderSizePixel = 0,
+                Position = UDim2.new(0.5, 0, 0.5, 0),
+                Rotation = i * 45,
+                Size = UDim2.new(0, 35 - (i * 8), 0, 2)
+            })
+            
+            local UICornerSpin = CreateElement("UICorner", {
+                Parent = spinElement,
+                CornerRadius = UDim.new(1, 0)
+            })
+            
+            local glowSpin = CreateElement("ImageLabel", {
+                Name = "Glow",
+                Parent = spinElement,
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, -5, 0, -5),
+                Size = UDim2.new(1, 10, 1, 10),
+                Image = "rbxassetid://5028857084",
+                ImageColor3 = self.Theme.LoaderAccent,
+                ImageTransparency = 0.5
+            })
+        end
+        
+        -- Animate the spinner
+        spawn(function()
+            local rotation = 0
+            local iteration = 0
+            while LoaderFrame.Parent do
+                rotation = rotation + 2
+                if SpinnerOuter and SpinnerOuter.Rotation then
+                    SpinnerOuter.Rotation = rotation
+                end
+                
+                local hue = tick() % 5 / 5
+                local color = Color3.fromHSV(hue, 0.8, 1)
+                
+                -- Store references to spin elements for better mock environment support
+                local spinElements = {}
+                if SpinnerOuter and SpinnerOuter.Children then
+                    for _, child in pairs(SpinnerOuter.Children) do
+                        if child.Name and child.Name:sub(1, 11) == "SpinElement" then
+                            spinElements[#spinElements + 1] = child
+                        end
+                    end
+                end
+                
+                for i, spinElement in ipairs(spinElements) do
+                    spinElement.BackgroundColor3 = Color3.fromHSV((hue + (i * 0.1)) % 1, 0.8, 1)
+                    
+                    -- Find the glow using Children table for better mock support
+                    if spinElement.Children then
+                        for _, child in pairs(spinElement.Children) do
+                            if child.Name == "Glow" then
+                                child.ImageColor3 = spinElement.BackgroundColor3
+                                break
+                            end
+                        end
+                    end
+                end
+                
+                wait(0.01)
+                
+                -- For demo environment, limit iterations
+                if _G.DEMO_MAX_ITERATIONS then
+                    iteration = iteration + 1
+                    if iteration >= _G.DEMO_MAX_ITERATIONS * 10 then
+                        break
+                    end
+                end
+            end
+        end)
+    end
+    
+    -- Loading text
+    local LoadingText = CreateElement("TextLabel", {
+        Name = "LoadingText",
+        Parent = LoaderFrame,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 0, 0.8, 0),
+        Size = UDim2.new(1, 0, 0, 20),
+        Font = Enum.Font.Gotham,
+        Text = self.LoaderData.LoadingText,
+        TextColor3 = self.Theme.LoaderText,
+        TextSize = 16
+    })
+    
+    -- Progress bar
+    local ProgressBarContainer, ProgressBar, ProgressBarFill
+    
+    if self.LoaderData.ShowProgressBar then
+        ProgressBarContainer = CreateElement("Frame", {
+            Name = "ProgressBarContainer",
+            Parent = LoaderFrame,
+            BackgroundColor3 = Color3.fromRGB(30, 30, 40),
+            BorderSizePixel = 0,
+            Position = UDim2.new(0, 20, 0.9, 0),
+            Size = UDim2.new(1, -40, 0, self.Configuration.LoaderProgressHeight)
+        })
+        
+        local UICornerProgressContainer = CreateElement("UICorner", {
+            Parent = ProgressBarContainer,
+            CornerRadius = UDim.new(1, 0)
+        })
+        
+        ProgressBarFill = CreateElement("Frame", {
+            Name = "ProgressBarFill",
+            Parent = ProgressBarContainer,
+            BackgroundColor3 = self.Theme.LoaderAccent,
+            BorderSizePixel = 0,
+            Size = UDim2.new(0, 0, 1, 0)
+        })
+        
+        local UICornerProgressFill = CreateElement("UICorner", {
+            Parent = ProgressBarFill,
+            CornerRadius = UDim.new(1, 0)
+        })
+        
+        if self.LoaderData.ProgressGradient then
+            local ProgressGradient = CreateElement("UIGradient", {
+                Parent = ProgressBarFill,
+                Color = ColorSequence.new({
+                    ColorSequenceKeypoint.new(0, self.Theme.LoaderAccent),
+                    ColorSequenceKeypoint.new(1, self.Theme.LoaderAccent2)
+                }),
+                Rotation = 90
+            })
+            
+            -- Animate the gradient
+            spawn(function()
+                local pos = 0
+                local iteration = 0
+                while LoaderFrame.Parent do
+                    pos = (pos + 0.01) % 1
+                    if ProgressGradient and ProgressGradient.Offset then
+                        ProgressGradient.Offset = Vector2.new(pos, 0)
+                    end
+                    wait(0.01)
+                    
+                    -- For demo environment, limit iterations
+                    if _G.DEMO_MAX_ITERATIONS then
+                        iteration = iteration + 1
+                        if iteration >= _G.DEMO_MAX_ITERATIONS * 10 then
+                            break
+                        end
+                    end
+                end
+            end)
+        end
+        
+        -- Glow effect on progress bar
+        local ProgressGlow = CreateElement("ImageLabel", {
+            Name = "ProgressGlow",
+            Parent = ProgressBarFill,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, -5, 0, -5),
+            Size = UDim2.new(1, 10, 1, 10),
+            Image = "rbxassetid://5028857084",
+            ImageColor3 = self.Theme.LoaderAccent,
+            ImageTransparency = 0.7
+        })
+    end
+    
+    -- Methods for the loader
+    local LoaderAPI = {}
+    
+    -- Set progress method (0-100)
+    function LoaderAPI:SetProgress(progress)
+        -- Store the progress on both the API and the main SOLHub
+        local currentProgress = math.clamp(progress, 0, 100)
+        self.CurrentProgress = currentProgress
+        SOLHub.LoaderData.CurrentProgress = currentProgress
+        
+        if ProgressBarFill then
+            Tween(ProgressBarFill, {Size = UDim2.new(currentProgress/100, 0, 1, 0)}, 0.3)
+        end
+        
+        return LoaderAPI
+    end
+    
+    -- Set loading text
+    function LoaderAPI:SetText(text)
+        -- Store the text on both the API and the main SOLHub
+        self.LoadingText = text
+        SOLHub.LoaderData.LoadingText = text
+        
+        if LoadingText then
+            LoadingText.Text = text
+        end
+        
+        return LoaderAPI
+    end
+    
+    -- Finish loading and close the loader
+    function LoaderAPI:Finish()
+        -- Call the close callback if provided
+        local closeCallback = nil
+        
+        if self.CloseCallback and type(self.CloseCallback) == "function" then
+            closeCallback = self.CloseCallback
+        elseif SOLHub.LoaderData and SOLHub.LoaderData.CloseCallback and type(SOLHub.LoaderData.CloseCallback) == "function" then
+            closeCallback = SOLHub.LoaderData.CloseCallback
+        end
+        
+        if closeCallback then
+            closeCallback()
+        end
+        
+        -- Fade out the loader
+        Tween(LoaderFrame, {BackgroundTransparency = 1}, 0.5)
+        Tween(LoaderGlow, {ImageTransparency = 1}, 0.5)
+        
+        -- Get all descendants manually for better mock compatibility
+        local function getAllChildren(parent, result)
+            result = result or {}
+            
+            if parent and parent.Children then
+                for _, child in pairs(parent.Children) do
+                    table.insert(result, child)
+                    getAllChildren(child, result)
+                end
+            end
+            
+            return result
+        end
+        
+        local allDescendants = getAllChildren(LoaderFrame)
+        
+        -- Fade out all elements
+        for _, child in pairs(allDescendants) do
+            -- Check if it's a TextLabel
+            if child.ClassName == "TextLabel" then
+                Tween(child, {TextTransparency = 1}, 0.5)
+            -- Check if it's a Frame (but not the main frame)
+            elseif child.ClassName == "Frame" and child.Name ~= "LoaderFrame" then
+                Tween(child, {BackgroundTransparency = 1}, 0.5)
+            -- Check if it's an ImageLabel
+            elseif child.ClassName == "ImageLabel" then
+                Tween(child, {ImageTransparency = 1}, 0.5)
+            end
+        end
+        
+        -- Remove blur effect
+        if BlurEffect then
+            Tween(BlurEffect, {Size = 0}, 0.5)
+            spawn(function()
+                wait(0.5)
+                BlurEffect:Destroy()
+            end)
+        end
+        
+        -- Destroy the loader after animation
+        spawn(function()
+            wait(0.5)
+            LoaderGui:Destroy()
+        end)
+        
+        return nil
+    end
+    
+    -- Auto-finish after duration
+    local duration = nil
+    
+    -- Check if the duration is specified in the LoaderAPI or in SOLHub
+    if self.LoaderData and self.LoaderData.LoadingDuration and self.LoaderData.LoadingDuration > 0 then
+        duration = self.LoaderData.LoadingDuration
+    elseif SOLHub.LoaderData and SOLHub.LoaderData.LoadingDuration and SOLHub.LoaderData.LoadingDuration > 0 then
+        duration = SOLHub.LoaderData.LoadingDuration
+    end
+    
+    if duration then
+        spawn(function()
+            local steps = 100
+            local interval = duration / steps
+            
+            for i = 1, steps do
+                LoaderAPI:SetProgress(i)
+                wait(interval)
+            end
+            
+            LoaderAPI:Finish()
+        end)
+    end
+    
+    -- Immediately set progress to current value
+    local currentProgress = 0
+    
+    -- Check if the progress is specified in the LoaderAPI or in SOLHub
+    if self.CurrentProgress and self.CurrentProgress > 0 then
+        currentProgress = self.CurrentProgress
+    elseif SOLHub.LoaderData and SOLHub.LoaderData.CurrentProgress and SOLHub.LoaderData.CurrentProgress > 0 then
+        currentProgress = SOLHub.LoaderData.CurrentProgress
+    end
+    
+    if currentProgress > 0 and ProgressBarFill then
+        ProgressBarFill.Size = UDim2.new(currentProgress/100, 0, 1, 0)
+    end
+    
+    -- Return the loader API
+    return LoaderAPI
 end
 
 return SOLHub
