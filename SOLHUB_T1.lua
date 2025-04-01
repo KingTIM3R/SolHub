@@ -1,75 +1,44 @@
 --[[
     SOLHub - Cyberpunk UI Library for Roblox Exploits
-    Inspired by Rayfield with a cleaner, minimalist design
+    Inspired by Rayfield
     
     Author: AI Assistant
-    Version: 1.1.0
+    Version: 1.0.0
 ]]
 
 local SOLHub = {
     Flags = {},
     Theme = {
         -- Main colors
-        Background = Color3.fromRGB(10, 10, 15),       -- Main background
-        DarkContrast = Color3.fromRGB(15, 15, 20),     -- Sidebar background
-        LightContrast = Color3.fromRGB(20, 20, 30),    -- Section background
-        TextColor = Color3.fromRGB(240, 240, 250),     -- Primary text color
+        Background = Color3.fromRGB(10, 10, 15),
+        DarkContrast = Color3.fromRGB(15, 15, 20),
+        LightContrast = Color3.fromRGB(20, 20, 30),
+        TextColor = Color3.fromRGB(240, 240, 250),
         
         -- Accent colors (neon cyberpunk theme)
-        AccentColor = Color3.fromRGB(0, 255, 196),     -- Primary accent (Cyan neon)
-        AccentColor2 = Color3.fromRGB(255, 0, 93),     -- Secondary accent (Magenta neon)
-        AccentColor3 = Color3.fromRGB(0, 89, 255),     -- Tertiary accent (Blue neon)
+        AccentColor = Color3.fromRGB(0, 255, 196),    -- Cyan neon
+        AccentColor2 = Color3.fromRGB(255, 0, 93),    -- Magenta neon
+        AccentColor3 = Color3.fromRGB(0, 89, 255),    -- Blue neon
         
         -- UI element colors
-        ElementBackground = Color3.fromRGB(25, 25, 35),  -- Button/element background
-        ElementBorder = Color3.fromRGB(30, 30, 45),      -- Element borders
-        InactiveElement = Color3.fromRGB(80, 80, 100),   -- Inactive elements
-        
-        -- Toggle-specific colors
-        ToggleBackground = Color3.fromRGB(30, 30, 40),   -- Toggle background
-        ToggleEnabled = Color3.fromRGB(0, 255, 196),     -- Toggle on state
-        ToggleDisabled = Color3.fromRGB(60, 60, 75),     -- Toggle off state
-        
-        -- Tab-specific colors
-        TabSelected = Color3.fromRGB(0, 255, 196),       -- Selected tab
-        TabBackground = Color3.fromRGB(25, 25, 35),      -- Tab background
+        ElementBackground = Color3.fromRGB(25, 25, 35),
+        ElementBorder = Color3.fromRGB(30, 30, 45),
+        InactiveElement = Color3.fromRGB(80, 80, 100),
     },
     Configuration = {
-        -- Window properties
         WindowSize = UDim2.new(0, 550, 0, 470),
         UICorner = 4,
-        
-        -- Element properties
-        ElementHeight = 40,                              -- Taller elements for better spacing
-        ElementPadding = 12,                             -- Increased padding between elements
-        ElementCorner = 3,                               -- Slightly rounder corners
-        
-        -- Section properties
-        SectionPadding = 15,                             -- Increased section padding
-        SectionGap = 25,                                 -- Larger gap between sections
-        
-        -- Tab properties
+        ElementHeight = 34,
+        ElementPadding = 4,
+        SectionPadding = 24,
         TabHeight = 40,
-        TabWidth = 160,                                  -- Fixed width for tabs
-        TabPadding = 10,                                 -- Increased padding between tabs
-        TabsLeftPadding = 20,                            -- Left padding for tab text
-        
-        -- Window padding
-        WindowPadding = 20,                              -- Increased window padding
-        ContentPadding = 15,                             -- Increased content padding
-        
-        -- Animation properties
-        AnimationDuration = 0.25,                        -- Slightly faster animations
+        TabPadding = 5,
+        WindowPadding = 15,
+        AnimationDuration = 0.3,
         AnimationEasingStyle = Enum.EasingStyle.Quart,
         AnimationEasingDirection = Enum.EasingDirection.Out,
-        
-        -- Text properties
-        HeaderFont = Enum.Font.GothamBold,               -- Bold font for headers
-        TextFont = Enum.Font.Gotham,                     -- Regular font for elements
+        TextFont = Enum.Font.GothamSemibold,
         TextSize = 14,
-        HeaderSize = 16,                                 -- Larger size for headers
-        
-        -- Notification properties
         NotificationDuration = 5,
         HoverAnimationDuration = 0.2,
     }
@@ -635,7 +604,6 @@ function SOLHub:CreateWindow(config)
                     Callback = config.Callback or function() end
                 }
                 
-                -- Clean, minimal button based on reference image
                 local Button = CreateElement("Frame", {
                     Name = buttonConfig.Name .. "Button",
                     Parent = SectionContent,
@@ -646,22 +614,27 @@ function SOLHub:CreateWindow(config)
                 
                 local UICornerButton = CreateElement("UICorner", {
                     Parent = Button,
-                    CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
+                    CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                 })
                 
-                -- Remove border stroke for cleaner look
+                local ButtonStroke = CreateElement("UIStroke", {
+                    Parent = Button,
+                    -- ApplyStrokeMode has a default value in CreateElement
+                    Color = SOLHub.Theme.ElementBorder,
+                    Thickness = 1
+                })
                 
                 local ButtonTitle = CreateElement("TextLabel", {
                     Name = "Title",
                     Parent = Button,
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 15, 0, 0),  -- More left padding
-                    Size = UDim2.new(1, -30, 1, 0),
+                    Position = UDim2.new(0, 10, 0, 0),
+                    Size = UDim2.new(1, -20, 1, 0),
                     Font = SOLHub.Configuration.TextFont,
                     Text = buttonConfig.Name,
                     TextColor3 = SOLHub.Theme.TextColor,
                     TextSize = SOLHub.Configuration.TextSize,
-                    TextXAlignment = Enum.TextXAlignment.Center  -- Center-aligned text
+                    TextXAlignment = Enum.TextXAlignment.Left
                 })
                 
                 local ButtonClickArea = CreateElement("TextButton", {
@@ -673,16 +646,14 @@ function SOLHub:CreateWindow(config)
                     ZIndex = 5
                 })
                 
-                -- Clean, modern hover interaction
+                -- Button Interaction Effects
                 ButtonClickArea.MouseEnter:Connect(function()
-                    -- Darken background on hover
-                    Tween(Button, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
+                    Tween(ButtonStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                     Tween(ButtonTitle, {TextColor3 = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 ButtonClickArea.MouseLeave:Connect(function()
-                    -- Return to original colors
-                    Tween(Button, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
+                    Tween(ButtonStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
                     Tween(ButtonTitle, {TextColor3 = SOLHub.Theme.TextColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
@@ -731,7 +702,6 @@ function SOLHub:CreateWindow(config)
                     Callback = config.Callback or function() end
                 }
                 
-                -- Main toggle container
                 local Toggle = CreateElement("Frame", {
                     Name = toggleConfig.Name .. "Toggle",
                     Parent = SectionContent,
@@ -742,18 +712,21 @@ function SOLHub:CreateWindow(config)
                 
                 local UICornerToggle = CreateElement("UICorner", {
                     Parent = Toggle,
-                    CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
+                    CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                 })
                 
-                -- Remove the border stroke for a cleaner look
-                -- Instead, use a slightly darker background
+                local ToggleStroke = CreateElement("UIStroke", {
+                    Parent = Toggle,
+                    -- ApplyStrokeMode has a default value in CreateElement
+                    Color = SOLHub.Theme.ElementBorder,
+                    Thickness = 1
+                })
                 
-                -- Toggle label with more padding on the left
                 local ToggleTitle = CreateElement("TextLabel", {
                     Name = "Title",
                     Parent = Toggle,
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 15, 0, 0),
+                    Position = UDim2.new(0, 10, 0, 0),
                     Size = UDim2.new(1, -60, 1, 0),
                     Font = SOLHub.Configuration.TextFont,
                     Text = toggleConfig.Name,
@@ -762,15 +735,29 @@ function SOLHub:CreateWindow(config)
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
                 
-                -- Circular toggle (simplified design based on reference)
+                -- Toggle Switch
+                local ToggleSwitch = CreateElement("Frame", {
+                    Name = "Switch",
+                    Parent = Toggle,
+                    BackgroundColor3 = SOLHub.Theme.InactiveElement,
+                    BorderSizePixel = 0,
+                    Position = UDim2.new(1, -50, 0.5, -10),
+                    Size = UDim2.new(0, 40, 0, 20),
+                    ZIndex = 2
+                })
+                
+                local UICornerSwitch = CreateElement("UICorner", {
+                    Parent = ToggleSwitch,
+                    CornerRadius = UDim.new(1, 0)
+                })
+                
                 local ToggleCircle = CreateElement("Frame", {
                     Name = "Circle",
-                    Parent = Toggle,
-                    AnchorPoint = Vector2.new(1, 0.5),
-                    BackgroundColor3 = SOLHub.Theme.ToggleDisabled,
-                    BorderSizePixel = 0,
-                    Position = UDim2.new(1, -15, 0.5, 0),
-                    Size = UDim2.new(0, 22, 0, 22),
+                    Parent = ToggleSwitch,
+                    AnchorPoint = Vector2.new(0, 0.5),
+                    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                    Position = UDim2.new(0, 2, 0.5, 0),
+                    Size = UDim2.new(0, 16, 0, 16),
                     ZIndex = 3
                 })
                 
@@ -779,10 +766,18 @@ function SOLHub:CreateWindow(config)
                     CornerRadius = UDim.new(1, 0)
                 })
                 
-                -- Glow effect for the toggle
+                local ToggleSwitchPadding = CreateElement("UIPadding", {
+                    Parent = ToggleSwitch,
+                    PaddingBottom = UDim.new(0, 2),
+                    PaddingLeft = UDim.new(0, 2),
+                    PaddingRight = UDim.new(0, 2),
+                    PaddingTop = UDim.new(0, 2)
+                })
+                
+                -- Neon glow around the toggle when active
                 local ToggleGlow = CreateElement("ImageLabel", {
                     Name = "Glow",
-                    Parent = ToggleCircle,
+                    Parent = ToggleSwitch,
                     BackgroundTransparency = 1,
                     Position = UDim2.new(0, -5, 0, -5),
                     Size = UDim2.new(1, 10, 1, 10),
@@ -791,7 +786,6 @@ function SOLHub:CreateWindow(config)
                     ImageTransparency = 1
                 })
                 
-                -- Click area for the entire toggle
                 local ToggleClickArea = CreateElement("TextButton", {
                     Name = "ClickArea",
                     Parent = Toggle,
@@ -804,15 +798,15 @@ function SOLHub:CreateWindow(config)
                 -- Toggle State
                 local Enabled = toggleConfig.Default
                 
-                -- Update toggle state visually (simplified for the new design)
+                -- Update toggle state visually
                 local function UpdateToggle()
                     if Enabled then
-                        -- When enabled: cyan circle with glow
-                        Tween(ToggleCircle, {BackgroundColor3 = SOLHub.Theme.ToggleEnabled})
+                        Tween(ToggleSwitch, {BackgroundColor3 = SOLHub.Theme.AccentColor})
+                        Tween(ToggleCircle, {Position = UDim2.new(0, 22, 0.5, 0)})
                         Tween(ToggleGlow, {ImageTransparency = 0.7})
                     else
-                        -- When disabled: dark gray circle without glow
-                        Tween(ToggleCircle, {BackgroundColor3 = SOLHub.Theme.ToggleDisabled})
+                        Tween(ToggleSwitch, {BackgroundColor3 = SOLHub.Theme.InactiveElement})
+                        Tween(ToggleCircle, {Position = UDim2.new(0, 2, 0.5, 0)})
                         Tween(ToggleGlow, {ImageTransparency = 1})
                     end
                 end
@@ -827,13 +821,11 @@ function SOLHub:CreateWindow(config)
                 
                 -- Toggle Interaction
                 ToggleClickArea.MouseEnter:Connect(function()
-                    -- Subtle hover effect for the toggle
-                    Tween(Toggle, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
+                    Tween(ToggleStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 ToggleClickArea.MouseLeave:Connect(function()
-                    -- Restore normal background color
-                    Tween(Toggle, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
+                    Tween(ToggleStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 ToggleClickArea.MouseButton1Click:Connect(function()
@@ -889,7 +881,6 @@ function SOLHub:CreateWindow(config)
                 sliderConfig.Default = math.clamp(sliderConfig.Default, sliderConfig.Min, sliderConfig.Max)
                 sliderConfig.Default = sliderConfig.Min + (math.floor((sliderConfig.Default - sliderConfig.Min) / sliderConfig.Increment + 0.5) * sliderConfig.Increment)
                 
-                -- Clean, minimal slider design based on reference image
                 local Slider = CreateElement("Frame", {
                     Name = sliderConfig.Name .. "Slider",
                     Parent = SectionContent,
@@ -900,10 +891,15 @@ function SOLHub:CreateWindow(config)
                 
                 local UICornerSlider = CreateElement("UICorner", {
                     Parent = Slider,
-                    CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
+                    CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                 })
                 
-                -- Removing the border stroke for a cleaner look
+                local SliderStroke = CreateElement("UIStroke", {
+                    Parent = Slider,
+                    -- ApplyStrokeMode has a default value in CreateElement
+                    Color = SOLHub.Theme.ElementBorder,
+                    Thickness = 1
+                })
                 
                 local SliderTitle = CreateElement("TextLabel", {
                     Name = "Title",
@@ -1003,30 +999,26 @@ function SOLHub:CreateWindow(config)
                 -- Set initial fill
                 UpdateSlider()
                 
-                -- Slider interaction with clean, modern design
+                -- Slider interaction
                 SliderButton.MouseButton1Down:Connect(function()
                     Dragging = true
-                    -- Slightly darken slider on click
-                    Tween(Slider, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
+                    Tween(SliderStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 UserInputService.InputEnded:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 and Dragging then
                         Dragging = false
-                        -- Return to original color when released
-                        Tween(Slider, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
+                        Tween(SliderStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
                     end
                 end)
                 
                 SliderButton.MouseEnter:Connect(function()
-                    -- Subtle hover effect 
-                    Tween(Slider, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
+                    Tween(SliderStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 SliderButton.MouseLeave:Connect(function()
                     if not Dragging then
-                        -- Return to original color when mouse leaves
-                        Tween(Slider, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
+                        Tween(SliderStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
                     end
                 end)
                 
@@ -1107,7 +1099,7 @@ function SOLHub:CreateWindow(config)
                     end
                 end
                 
-                -- Create clean, minimal Dropdown based on reference image
+                -- Create Dropdown
                 local Dropdown = CreateElement("Frame", {
                     Name = dropdownConfig.Name .. "Dropdown",
                     Parent = SectionContent,
@@ -1119,10 +1111,15 @@ function SOLHub:CreateWindow(config)
                 
                 local UICornerDropdown = CreateElement("UICorner", {
                     Parent = Dropdown,
-                    CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
+                    CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                 })
                 
-                -- Remove border stroke for a cleaner look
+                local DropdownStroke = CreateElement("UIStroke", {
+                    Parent = Dropdown,
+                    -- ApplyStrokeMode has a default value in CreateElement
+                    Color = SOLHub.Theme.ElementBorder,
+                    Thickness = 1
+                })
                 
                 local DropdownTitle = CreateElement("TextLabel", {
                     Name = "Title",
@@ -1154,7 +1151,7 @@ function SOLHub:CreateWindow(config)
                     Name = "Arrow",
                     Parent = Dropdown,
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(1, -25, 0, SOLHub.Configuration.ElementHeight/2 - 7.5),
+                    Position = UDim2.new(1, -25, 0, 5),
                     Size = UDim2.new(0, 15, 0, 15),
                     Image = "rbxassetid://6031091004",
                     ImageColor3 = SOLHub.Theme.TextColor,
@@ -1347,15 +1344,13 @@ function SOLHub:CreateWindow(config)
                     end
                 end)
                 
-                -- Hover effect for button with cleaner style
+                -- Hover effect for button
                 DropdownButton.MouseEnter:Connect(function()
-                    -- Slightly darken background on hover
-                    Tween(Dropdown, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
+                    Tween(DropdownStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 DropdownButton.MouseLeave:Connect(function()
-                    -- Return to original color when not hovering
-                    Tween(Dropdown, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
+                    Tween(DropdownStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
                 
                 -- Close dropdown when clicking elsewhere
@@ -1465,34 +1460,30 @@ function SOLHub:CreateWindow(config)
                         end)
                         
                     elseif not dropdownConfig.MultiSelection and type(value) == "string" then
-                        -- Update the dropdown value directly without needing to access children
-                        DefaultOption = value
-                        DropdownSelection.Text = value
-                        
-                        -- Update flag and call callback
-                        if dropdownConfig.Flag then
-                            SOLHub.Flags[dropdownConfig.Flag] = value
-                        end
-                        task.spawn(function()
-                            dropdownConfig.Callback(value)
-                        end)
-                                
-                        -- Skip attempting to iterate through children in mock environment
-                        if DropdownContent.ClassName ~= "MockScrollingFrame" then
-                            -- Find the option and simulate a click
-                            for _, child in pairs(DropdownContent:GetChildren()) do
-                                if child:IsA("TextButton") and child.Text == value then
-                                    -- Deselect all options
-                                    for _, otherChild in pairs(DropdownContent:GetChildren()) do
-                                        if otherChild:IsA("TextButton") then
-                                            Tween(otherChild, {BackgroundColor3 = SOLHub.Theme.ElementBackground, TextColor3 = SOLHub.Theme.TextColor})
-                                        end
+                        -- Find the option and simulate a click
+                        for _, child in pairs(DropdownContent:GetChildren()) do
+                            if child:IsA("TextButton") and child.Text == value then
+                                -- Deselect all options
+                                for _, otherChild in pairs(DropdownContent:GetChildren()) do
+                                    if otherChild:IsA("TextButton") then
+                                        Tween(otherChild, {BackgroundColor3 = SOLHub.Theme.ElementBackground, TextColor3 = SOLHub.Theme.TextColor})
                                     end
-                                
-                                    -- Select this option
-                                    Tween(child, {BackgroundColor3 = SOLHub.Theme.AccentColor, TextColor3 = Color3.fromRGB(255, 255, 255)})
-                                    break
                                 end
+                                
+                                -- Select this option
+                                DefaultOption = value
+                                DropdownSelection.Text = value
+                                Tween(child, {BackgroundColor3 = SOLHub.Theme.AccentColor, TextColor3 = Color3.fromRGB(255, 255, 255)})
+                                
+                                -- Update flag and call callback
+                                if dropdownConfig.Flag then
+                                    SOLHub.Flags[dropdownConfig.Flag] = value
+                                end
+                                task.spawn(function()
+                                    dropdownConfig.Callback(value)
+                                end)
+                                
+                                break
                             end
                         end
                     end
@@ -1500,12 +1491,6 @@ function SOLHub:CreateWindow(config)
                 
                 function DropdownApi:Refresh(options, keepSelection)
                     dropdownConfig.Options = options
-                    
-                    -- Skip children manipulation in mock environment
-                    if DropdownContent.ClassName == "MockScrollingFrame" then
-                        -- Just update the options data
-                        return
-                    end
                     
                     -- Clear current options
                     for _, child in pairs(DropdownContent:GetChildren()) do
@@ -1537,11 +1522,7 @@ function SOLHub:CreateWindow(config)
                                 DefaultOption = option
                             end
                         end
-                        
-                        -- Skip AddOption in mock environment
-                        if DropdownContent.ClassName ~= "MockScrollingFrame" then
-                            AddOption(option)
-                        end
+                        AddOption(option)
                     end
                     
                     -- Update selection text
