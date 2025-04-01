@@ -1,7 +1,7 @@
 --[[
     SOLHub - Cyberpunk UI Library for Roblox Exploits
     Inspired by Rayfield with a cleaner, minimalist design
-    
+
     Author: AI Assistant
     Version: 1.2.0
 ]]
@@ -28,26 +28,26 @@ local SOLHub = {
         DarkContrast = Color3.fromRGB(15, 15, 20),     -- Sidebar background
         LightContrast = Color3.fromRGB(20, 20, 30),    -- Section background
         TextColor = Color3.fromRGB(240, 240, 250),     -- Primary text color
-        
+
         -- Accent colors (neon cyberpunk theme)
         AccentColor = Color3.fromRGB(0, 255, 196),     -- Primary accent (Cyan neon)
         AccentColor2 = Color3.fromRGB(255, 0, 93),     -- Secondary accent (Magenta neon)
         AccentColor3 = Color3.fromRGB(0, 89, 255),     -- Tertiary accent (Blue neon)
-        
+
         -- UI element colors
         ElementBackground = Color3.fromRGB(25, 25, 35),  -- Button/element background
         ElementBorder = Color3.fromRGB(30, 30, 45),      -- Element borders
         InactiveElement = Color3.fromRGB(80, 80, 100),   -- Inactive elements
-        
+
         -- Toggle-specific colors
         ToggleBackground = Color3.fromRGB(30, 30, 40),   -- Toggle background
         ToggleEnabled = Color3.fromRGB(0, 255, 196),     -- Toggle on state
         ToggleDisabled = Color3.fromRGB(60, 60, 75),     -- Toggle off state
-        
+
         -- Tab-specific colors
         TabSelected = Color3.fromRGB(0, 255, 196),       -- Selected tab
         TabBackground = Color3.fromRGB(25, 25, 35),      -- Tab background
-        
+
         -- Loader colors
         LoaderBackground = Color3.fromRGB(5, 5, 10),     -- Darker background for loader
         LoaderAccent = Color3.fromRGB(0, 255, 196),      -- Loader accent color (cyan neon)
@@ -58,26 +58,26 @@ local SOLHub = {
         -- Window properties
         WindowSize = UDim2.new(0, 550, 0, 470),
         UICorner = 4,
-        
+
         -- Element properties
         ElementHeight = 40,                              -- Taller elements for better spacing
         ElementPadding = 12,                             -- Increased padding between elements
         ElementCorner = 3,                               -- Slightly rounder corners
-        
+
         -- Section properties
         SectionPadding = 15,                             -- Increased section padding
         SectionGap = 25,                                 -- Larger gap between sections
-        
+
         -- Tab properties
         TabHeight = 40,
         TabWidth = 160,                                  -- Fixed width for tabs
         TabPadding = 10,                                 -- Increased padding between tabs
         TabsLeftPadding = 20,                            -- Left padding for tab text
-        
+
         -- Window padding
         WindowPadding = 20,                              -- Increased window padding
         ContentPadding = 15,                             -- Increased content padding
-        
+
         -- Loader properties
         LoaderSize = UDim2.new(0, 300, 0, 200),          -- Size of the loader window
         LoaderPosition = UDim2.new(0.5, -150, 0.5, -100),-- Center position of loader
@@ -88,18 +88,18 @@ local SOLHub = {
         LoaderSubTextSize = 14,                          -- Subtext size for loader
         LoaderProgressHeight = 4,                        -- Height of the progress bar
         LoaderFont = Enum.Font.GothamBold,               -- Font for loader text
-        
+
         -- Animation properties
         AnimationDuration = 0.25,                        -- Slightly faster animations
         AnimationEasingStyle = Enum.EasingStyle.Quart,
         AnimationEasingDirection = Enum.EasingDirection.Out,
-        
+
         -- Text properties
         HeaderFont = Enum.Font.GothamBold,               -- Bold font for headers
         TextFont = Enum.Font.Gotham,                     -- Regular font for elements
         TextSize = 14,
         HeaderSize = 16,                                 -- Larger size for headers
-        
+
         -- Notification properties
         NotificationDuration = 5,
         HoverAnimationDuration = 0.2,
@@ -122,19 +122,19 @@ local function MakeDraggable(topBarObject, object)
     local DragInput = nil
     local DragStart = nil
     local StartPosition = nil
-    
+
     local function Update(input)
         local Delta = input.Position - DragStart
         local Position = UDim2.new(StartPosition.X.Scale, StartPosition.X.Offset + Delta.X, StartPosition.Y.Scale, StartPosition.Y.Offset + Delta.Y)
         object.Position = Position
     end
-    
+
     topBarObject.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             Dragging = true
             DragStart = input.Position
             StartPosition = object.Position
-            
+
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     Dragging = false
@@ -142,13 +142,13 @@ local function MakeDraggable(topBarObject, object)
             end)
         end
     end)
-    
+
     topBarObject.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             DragInput = input
         end
     end)
-    
+
     UserInputService.InputChanged:Connect(function(input)
         if input == DragInput and Dragging then
             Update(input)
@@ -160,7 +160,7 @@ local function Tween(object, properties, duration, style, direction)
     duration = duration or SOLHub.Configuration.AnimationDuration
     style = style or SOLHub.Configuration.AnimationEasingStyle
     direction = direction or SOLHub.Configuration.AnimationEasingDirection
-    
+
     local tween = TweenService:Create(
         object,
         TweenInfo.new(duration, style, direction),
@@ -172,20 +172,20 @@ end
 
 local function CreateElement(elementType, properties)
     local element = Instance.new(elementType)
-    
+
     -- Special handling for UIStroke in the mock environment
     if elementType == "UIStroke" then
         if properties.ApplyStrokeMode == nil then
             properties.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
         end
     end
-    
+
     for property, value in pairs(properties) do
         pcall(function()
             element[property] = value
         end)
     end
-    
+
     return element
 end
 
@@ -208,12 +208,13 @@ function SOLHub:CreateWindow(config)
         KeySystem = config.KeySystem or false,
         KeySettings = config.KeySettings or {
             Title = "SOLHub Key System",
-            Subtitle = "Key System",
-            Note = "No method of obtaining the key is provided",
-            Key = {"Hello", "World"}
+            Subtitle = "Enter your key",
+            Note = "Get your key from our website",
+            VerifyUrl = "https://6ff425ce-1847-4e76-a1c3-279f90ed7a26-00-1p4i8ubilvme.riker.replit.dev/validate-key",
+            SaveKey = true
         }
     }
-    
+
     local ScreenGui
     if syn and syn.protect_gui then
         ScreenGui = Instance.new("ScreenGui")
@@ -226,11 +227,11 @@ function SOLHub:CreateWindow(config)
         ScreenGui = Instance.new("ScreenGui")
         ScreenGui.Parent = CoreGui
     end
-    
+
     ScreenGui.Name = "SOLHub_" .. windowConfig.Title
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     ScreenGui.ResetOnSpawn = false
-    
+
     -- Main Window Frame
     local MainFrame = CreateElement("Frame", {
         Name = "MainFrame",
@@ -241,12 +242,12 @@ function SOLHub:CreateWindow(config)
         Size = SOLHub.Configuration.WindowSize,
         ClipsDescendants = true
     })
-    
+
     local UICorner = CreateElement("UICorner", {
         Parent = MainFrame,
         CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
     })
-    
+
     local Glow = CreateElement("ImageLabel", {
         Name = "Glow",
         Parent = MainFrame,
@@ -260,7 +261,7 @@ function SOLHub:CreateWindow(config)
         ScaleType = Enum.ScaleType.Slice,
         SliceCenter = Rect.new(24, 24, 276, 276)
     })
-    
+
     -- TopBar
     local TopBar = CreateElement("Frame", {
         Name = "TopBar",
@@ -269,12 +270,12 @@ function SOLHub:CreateWindow(config)
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 0, 40)
     })
-    
+
     local UICornerTopBar = CreateElement("UICorner", {
         Parent = TopBar,
         CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
     })
-    
+
     local TopBarGradient = CreateElement("UIGradient", {
         Parent = TopBar,
         Color = ColorSequence.new({
@@ -283,7 +284,7 @@ function SOLHub:CreateWindow(config)
         }),
         Rotation = 90
     })
-    
+
     local TitleText = CreateElement("TextLabel", {
         Name = "Title",
         Parent = TopBar,
@@ -296,7 +297,7 @@ function SOLHub:CreateWindow(config)
         TextSize = 18,
         TextXAlignment = Enum.TextXAlignment.Left
     })
-    
+
     local SubTitleText = CreateElement("TextLabel", {
         Name = "SubTitle",
         Parent = TopBar,
@@ -309,7 +310,7 @@ function SOLHub:CreateWindow(config)
         TextSize = 14,
         TextXAlignment = Enum.TextXAlignment.Left
     })
-    
+
     -- Cyberpunk-style neon line under the title bar
     local NeonLine = CreateElement("Frame", {
         Name = "NeonLine",
@@ -320,7 +321,7 @@ function SOLHub:CreateWindow(config)
         Size = UDim2.new(1, 0, 0, 1),
         ZIndex = 3
     })
-    
+
     -- Add glow effect to the neon line
     local NeonGlow = CreateElement("ImageLabel", {
         Name = "NeonGlow",
@@ -332,7 +333,7 @@ function SOLHub:CreateWindow(config)
         ImageColor3 = SOLHub.Theme.AccentColor,
         ImageTransparency = 0.3
     })
-    
+
     -- Make the neon line glow effect
     spawn(function()
         local iteration = 0
@@ -342,7 +343,7 @@ function SOLHub:CreateWindow(config)
             Tween(NeonLine, {BackgroundColor3 = rainbow}, 1)
             Tween(NeonGlow, {ImageColor3 = rainbow}, 1)
             wait(0.5)
-            
+
             -- For demo environment, limit iterations
             if _G.DEMO_MAX_ITERATIONS then
                 iteration = iteration + 1
@@ -353,7 +354,7 @@ function SOLHub:CreateWindow(config)
             end
         end
     end)
-    
+
     -- Close Button
     local CloseButton = CreateElement("ImageButton", {
         Name = "CloseButton",
@@ -364,25 +365,25 @@ function SOLHub:CreateWindow(config)
         Image = "rbxassetid://6031094678",
         ImageColor3 = Color3.fromRGB(180, 180, 190)
     })
-    
+
     CloseButton.MouseEnter:Connect(function()
         Tween(CloseButton, {ImageColor3 = SOLHub.Theme.AccentColor2})
     end)
-    
+
     CloseButton.MouseLeave:Connect(function()
         Tween(CloseButton, {ImageColor3 = Color3.fromRGB(180, 180, 190)})
     end)
-    
+
     CloseButton.MouseButton1Click:Connect(function()
         Tween(MainFrame, {Size = UDim2.new(0, SOLHub.Configuration.WindowSize.X.Offset, 0, 0)}, 0.5)
         Tween(Glow, {ImageTransparency = 1}, 0.5)
         wait(0.5)
         ScreenGui:Destroy()
     end)
-    
+
     -- Make window draggable
     MakeDraggable(TopBar, MainFrame)
-    
+
     -- TabContainer
     local TabContainer = CreateElement("Frame", {
         Name = "TabContainer",
@@ -393,12 +394,12 @@ function SOLHub:CreateWindow(config)
         Size = UDim2.new(0, 140, 1, -(50 + SOLHub.Configuration.WindowPadding)),
         ZIndex = 2
     })
-    
+
     local UICornerTabContainer = CreateElement("UICorner", {
         Parent = TabContainer,
         CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
     })
-    
+
     local TabContainerPadding = CreateElement("UIPadding", {
         Parent = TabContainer,
         PaddingBottom = UDim.new(0, SOLHub.Configuration.WindowPadding),
@@ -406,7 +407,7 @@ function SOLHub:CreateWindow(config)
         PaddingRight = UDim.new(0, SOLHub.Configuration.WindowPadding),
         PaddingTop = UDim.new(0, SOLHub.Configuration.WindowPadding)
     })
-    
+
     local TabList = CreateElement("ScrollingFrame", {
         Name = "TabList",
         Parent = TabContainer,
@@ -419,13 +420,13 @@ function SOLHub:CreateWindow(config)
         ScrollBarImageColor3 = SOLHub.Theme.AccentColor,
         VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
     })
-    
+
     local TabListLayout = CreateElement("UIListLayout", {
         Parent = TabList,
         SortOrder = Enum.SortOrder.LayoutOrder,
         Padding = UDim.new(0, SOLHub.Configuration.TabPadding)
     })
-    
+
     -- Content Container
     local ContentContainer = CreateElement("Frame", {
         Name = "ContentContainer",
@@ -436,12 +437,12 @@ function SOLHub:CreateWindow(config)
         Size = UDim2.new(1, -(140 + SOLHub.Configuration.WindowPadding * 3), 1, -(50 + SOLHub.Configuration.WindowPadding)),
         ZIndex = 2
     })
-    
+
     local UICornerContent = CreateElement("UICorner", {
         Parent = ContentContainer,
         CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
     })
-    
+
     local ContentContainerPadding = CreateElement("UIPadding", {
         Parent = ContentContainer,
         PaddingBottom = UDim.new(0, SOLHub.Configuration.WindowPadding),
@@ -449,19 +450,19 @@ function SOLHub:CreateWindow(config)
         PaddingRight = UDim.new(0, SOLHub.Configuration.WindowPadding),
         PaddingTop = UDim.new(0, SOLHub.Configuration.WindowPadding)
     })
-    
+
     -- Tab System Logic
     local Window = {}
     local Tabs = {}
     local ActiveTab = nil
-    
+
     function Window:CreateTab(tabConfig)
         tabConfig = tabConfig or {}
         local tabInfo = {
             Name = tabConfig.Name or "Tab",
             Icon = tabConfig.Icon
         }
-        
+
         -- Create Tab Button
         local TabButton = CreateElement("TextButton", {
             Name = tabInfo.Name .. "Button",
@@ -472,12 +473,12 @@ function SOLHub:CreateWindow(config)
             Text = "",
             AutoButtonColor = false
         })
-        
+
         local UICornerTabButton = CreateElement("UICorner", {
             Parent = TabButton,
             CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
         })
-        
+
         local TabIcon = nil
         if tabInfo.Icon then
             TabIcon = CreateElement("ImageLabel", {
@@ -490,7 +491,7 @@ function SOLHub:CreateWindow(config)
                 ImageColor3 = SOLHub.Theme.TextColor
             })
         end
-        
+
         local TabText = CreateElement("TextLabel", {
             Name = "TabName",
             Parent = TabButton,
@@ -503,7 +504,7 @@ function SOLHub:CreateWindow(config)
             TextSize = SOLHub.Configuration.TextSize,
             TextXAlignment = Enum.TextXAlignment.Left
         })
-        
+
         -- Create Tab Content with enhanced scrolling
         local TabContent = CreateElement("ScrollingFrame", {
             Name = tabInfo.Name .. "Content",
@@ -519,14 +520,14 @@ function SOLHub:CreateWindow(config)
             -- Using pcall for compatibility with our mock environment
             Visible = false
         })
-        
+
         -- Try to apply advanced scroll properties if available (in real Roblox)
         pcall(function()
             TabContent.ScrollingDirection = Enum.ScrollingDirection.Y
             TabContent.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
             TabContent.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
         end)
-        
+
         -- Add cyberpunk-style scroll bar decoration
         local ScrollBarDecoration = CreateElement("Frame", {
             Name = "ScrollBarDecoration",
@@ -538,33 +539,46 @@ function SOLHub:CreateWindow(config)
             Size = UDim2.new(0, 1, 1, 0),
             ZIndex = 2
         })
-        
+
         local ElementList = CreateElement("UIListLayout", {
             Parent = TabContent,
             SortOrder = Enum.SortOrder.LayoutOrder,
             Padding = UDim.new(0, SOLHub.Configuration.ElementPadding)
         })
-        
-        -- Update Canvas Size function
+
+        -- Update Canvas Size function with improved calculation
         local function UpdateCanvasSize()
-            TabContent.CanvasSize = UDim2.new(0, 0, 0, ElementList.AbsoluteContentSize.Y + SOLHub.Configuration.WindowPadding)
+            local contentSize = ElementList.AbsoluteContentSize.Y
+            -- Ensure we have enough space and prevent canvas size flickering
+            if contentSize > 0 then
+                -- Add extra padding to ensure there's always room to scroll
+                local paddingAmount = SOLHub.Configuration.WindowPadding * 2
+                TabContent.CanvasSize = UDim2.new(0, 0, 0, contentSize + paddingAmount)
+            end
         end
-        
+
+        -- Connect the update function and also trigger an initial update
         ElementList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateCanvasSize)
-        
+        -- Ensure canvas size is updated when tab is selected
+        TabContent:GetPropertyChangedSignal("Visible"):Connect(function()
+            if TabContent.Visible then
+                UpdateCanvasSize()
+            end
+        end)
+
         -- Tab Selection Logic
         TabButton.MouseEnter:Connect(function()
             if TabContent ~= ActiveTab then
                 Tween(TabButton, {BackgroundColor3 = SOLHub.Theme.ElementBorder})
             end
         end)
-        
+
         TabButton.MouseLeave:Connect(function()
             if TabContent ~= ActiveTab then
                 Tween(TabButton, {BackgroundColor3 = SOLHub.Theme.ElementBackground})
             end
         end)
-        
+
         TabButton.MouseButton1Click:Connect(function()
             if TabContent ~= ActiveTab then
                 -- Deactivate current tab
@@ -575,12 +589,12 @@ function SOLHub:CreateWindow(config)
                         Tween(activeTabButton, {BackgroundColor3 = SOLHub.Theme.ElementBackground})
                     end
                 end
-                
+
                 -- Activate new tab
                 ActiveTab = TabContent
                 TabContent.Visible = true
                 Tween(TabButton, {BackgroundColor3 = SOLHub.Theme.AccentColor})
-                
+
                 -- Update accent color on tab button
                 if TabIcon then
                     Tween(TabIcon, {ImageColor3 = Color3.new(1, 1, 1)})
@@ -588,10 +602,10 @@ function SOLHub:CreateWindow(config)
                 Tween(TabText, {TextColor3 = Color3.new(1, 1, 1)})
             end
         end)
-        
+
         -- Tab Methods
         local Tab = {}
-        
+
         function Tab:CreateSection(sectionConfig)
             sectionConfig = sectionConfig or {}
             local sectionInfo = {
@@ -600,7 +614,7 @@ function SOLHub:CreateWindow(config)
                 Collapsible = sectionConfig.Collapsible ~= nil and sectionConfig.Collapsible or true, -- Default to collapsible
                 Collapsed = sectionConfig.Collapsed or false -- Default to expanded
             }
-            
+
             local SectionContainer = CreateElement("Frame", {
                 Name = sectionInfo.Name .. "Section",
                 Parent = TabContent,
@@ -609,12 +623,12 @@ function SOLHub:CreateWindow(config)
                 Size = UDim2.new(1, 0, 0, 40) -- Initial size, will be updated
                 -- AutomaticSize is mocked in the demo environment
             })
-            
+
             local UICornerSection = CreateElement("UICorner", {
                 Parent = SectionContainer,
                 CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
             })
-            
+
             -- Create the title bar with cyberpunk style
             local SectionTitleBar = CreateElement("Frame", {
                 Name = "TitleBar",
@@ -624,7 +638,7 @@ function SOLHub:CreateWindow(config)
                 Size = UDim2.new(1, 0, 0, 40),
                 ZIndex = 4
             })
-            
+
             local SectionTitle = CreateElement("TextLabel", {
                 Name = "Title",
                 Parent = SectionTitleBar,
@@ -637,7 +651,7 @@ function SOLHub:CreateWindow(config)
                 TextSize = SOLHub.Configuration.TextSize + 2,
                 TextXAlignment = Enum.TextXAlignment.Left
             })
-            
+
             -- Dropdown arrow for collapsible sections
             local DropdownArrow = nil
             if sectionInfo.Collapsible then
@@ -654,7 +668,7 @@ function SOLHub:CreateWindow(config)
                     TextXAlignment = Enum.TextXAlignment.Center
                 })
             end
-            
+
             -- Cyberpunk-style neon line under section title
             local SectionNeonLine = CreateElement("Frame", {
                 Name = "NeonLine",
@@ -665,7 +679,7 @@ function SOLHub:CreateWindow(config)
                 Size = UDim2.new(0, 30, 0, 1),
                 ZIndex = 3
             })
-            
+
             -- Add subtle glow effect to the section neon line
             local SectionNeonGlow = CreateElement("ImageLabel", {
                 Name = "NeonGlow",
@@ -677,7 +691,7 @@ function SOLHub:CreateWindow(config)
                 ImageColor3 = SOLHub.Theme.AccentColor,
                 ImageTransparency = 0.3
             })
-            
+
             -- Section content (will be hidden when collapsed)
             local SectionContent = CreateElement("Frame", {
                 Name = "Content",
@@ -688,7 +702,7 @@ function SOLHub:CreateWindow(config)
                 Visible = not sectionInfo.Collapsed
                 -- AutomaticSize is mocked in the demo environment
             })
-            
+
             local SectionPadding = CreateElement("UIPadding", {
                 Parent = SectionContent,
                 PaddingBottom = UDim.new(0, 10),
@@ -696,13 +710,13 @@ function SOLHub:CreateWindow(config)
                 PaddingRight = UDim.new(0, 10),
                 PaddingTop = UDim.new(0, 0)
             })
-            
+
             local SectionLayout = CreateElement("UIListLayout", {
                 Parent = SectionContent,
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Padding = UDim.new(0, sectionInfo.ContentPadding)
             })
-            
+
             -- Function to update section size based on content
             local function UpdateSectionSize()
                 local contentSize = SectionLayout.AbsoluteContentSize.Y
@@ -713,10 +727,10 @@ function SOLHub:CreateWindow(config)
                 end
                 UpdateCanvasSize()
             end
-            
+
             -- Update Canvas Size when section content changes
             SectionLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(UpdateSectionSize)
-            
+
             -- Add click event to title bar for collapsing/expanding
             if sectionInfo.Collapsible then
                 -- Create invisible button for better click handling
@@ -728,32 +742,32 @@ function SOLHub:CreateWindow(config)
                     Text = "",
                     ZIndex = 6
                 })
-                
+
                 -- Set up the toggle behavior
                 TitleClickArea.MouseButton1Click:Connect(function()
                     sectionInfo.Collapsed = not sectionInfo.Collapsed
-                    
+
                     -- Update the dropdown arrow
                     if DropdownArrow then
                         DropdownArrow.Text = sectionInfo.Collapsed and "▼" or "▲"
                     end
-                    
+
                     -- Toggle content visibility with animation
                     SectionContent.Visible = not sectionInfo.Collapsed
-                    
+
                     -- Update section size with animation
                     UpdateSectionSize()
-                    
+
                     -- Add a pulse effect to the neon line when toggled
                     Tween(SectionNeonLine, {Size = UDim2.new(0, 60, 0, 1)}, 0.2)
-                    
+
                     -- Use task.spawn to handle wait in a separate thread (for demo compatibility)
                     task.spawn(function()
                         wait(0.2)
                         Tween(SectionNeonLine, {Size = UDim2.new(0, 30, 0, 1)}, 0.2)
                     end)
                 end)
-                
+
                 -- Hover effect
                 TitleClickArea.MouseEnter:Connect(function()
                     Tween(SectionTitle, {TextColor3 = SOLHub.Theme.AccentColor}, 0.2)
@@ -761,7 +775,7 @@ function SOLHub:CreateWindow(config)
                         Tween(DropdownArrow, {TextTransparency = 0}, 0.2)
                     end
                 end)
-                
+
                 TitleClickArea.MouseLeave:Connect(function()
                     Tween(SectionTitle, {TextColor3 = SOLHub.Theme.TextColor}, 0.2)
                     if DropdownArrow then
@@ -769,17 +783,17 @@ function SOLHub:CreateWindow(config)
                     end
                 end)
             end
-            
+
             -- Section Methods
             local Section = {}
-            
+
             function Section:AddButton(config)
                 config = config or {}
                 local buttonConfig = {
                     Name = config.Name or "Button",
                     Callback = config.Callback or function() end
                 }
-                
+
                 -- Clean, minimal button based on reference image
                 local Button = CreateElement("Frame", {
                     Name = buttonConfig.Name .. "Button",
@@ -788,14 +802,14 @@ function SOLHub:CreateWindow(config)
                     BorderSizePixel = 0,
                     Size = UDim2.new(1, 0, 0, SOLHub.Configuration.ElementHeight)
                 })
-                
+
                 local UICornerButton = CreateElement("UICorner", {
                     Parent = Button,
                     CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
                 })
-                
+
                 -- Remove border stroke for cleaner look
-                
+
                 local ButtonTitle = CreateElement("TextLabel", {
                     Name = "Title",
                     Parent = Button,
@@ -808,7 +822,7 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize,
                     TextXAlignment = Enum.TextXAlignment.Center  -- Center-aligned text
                 })
-                
+
                 local ButtonClickArea = CreateElement("TextButton", {
                     Name = "ClickArea",
                     Parent = Button,
@@ -817,20 +831,20 @@ function SOLHub:CreateWindow(config)
                     Text = "",
                     ZIndex = 5
                 })
-                
+
                 -- Clean, modern hover interaction
                 ButtonClickArea.MouseEnter:Connect(function()
                     -- Darken background on hover
                     Tween(Button, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
                     Tween(ButtonTitle, {TextColor3 = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
-                
+
                 ButtonClickArea.MouseLeave:Connect(function()
                     -- Return to original colors
                     Tween(Button, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
                     Tween(ButtonTitle, {TextColor3 = SOLHub.Theme.TextColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
-                
+
                 -- Cyberpunk-style click effect
                 ButtonClickArea.MouseButton1Down:Connect(function()
                     -- Create a ripple effect
@@ -844,29 +858,29 @@ function SOLHub:CreateWindow(config)
                         Position = UDim2.new(0.5, 0, 0.5, 0),
                         ZIndex = 2
                     })
-                    
+
                     local RippleCorner = CreateElement("UICorner", {
                         Parent = Ripple,
                         CornerRadius = UDim.new(1, 0)
                     })
-                    
+
                     -- Start small, expand to full button size
                     Ripple.Size = UDim2.new(0, 0, 0, 0)
                     local targetSize = UDim2.new(0, Button.AbsoluteSize.X * 1.5, 0, Button.AbsoluteSize.X * 1.5)
                     Tween(Ripple, {Size = targetSize, BackgroundTransparency = 1}, 0.5)
-                    
+
                     -- Remove the ripple after animation completes
                     Debris:AddItem(Ripple, 0.5)
                 end)
-                
+
                 ButtonClickArea.MouseButton1Click:Connect(function()
                     -- Execute callback
                     task.spawn(buttonConfig.Callback)
                 end)
-                
+
                 return Button
             end
-            
+
             function Section:AddToggle(config)
                 config = config or {}
                 local toggleConfig = {
@@ -875,7 +889,7 @@ function SOLHub:CreateWindow(config)
                     Flag = config.Flag,
                     Callback = config.Callback or function() end
                 }
-                
+
                 -- Main toggle container
                 local Toggle = CreateElement("Frame", {
                     Name = toggleConfig.Name .. "Toggle",
@@ -884,15 +898,15 @@ function SOLHub:CreateWindow(config)
                     BorderSizePixel = 0,
                     Size = UDim2.new(1, 0, 0, SOLHub.Configuration.ElementHeight)
                 })
-                
+
                 local UICornerToggle = CreateElement("UICorner", {
                     Parent = Toggle,
                     CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
                 })
-                
+
                 -- Remove the border stroke for a cleaner look
                 -- Instead, use a slightly darker background
-                
+
                 -- Toggle label with more padding on the left
                 local ToggleTitle = CreateElement("TextLabel", {
                     Name = "Title",
@@ -906,7 +920,7 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize,
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
-                
+
                 -- Circular toggle (simplified design based on reference)
                 local ToggleCircle = CreateElement("Frame", {
                     Name = "Circle",
@@ -918,12 +932,12 @@ function SOLHub:CreateWindow(config)
                     Size = UDim2.new(0, 22, 0, 22),
                     ZIndex = 3
                 })
-                
+
                 local UICornerCircle = CreateElement("UICorner", {
                     Parent = ToggleCircle,
                     CornerRadius = UDim.new(1, 0)
                 })
-                
+
                 -- Glow effect for the toggle
                 local ToggleGlow = CreateElement("ImageLabel", {
                     Name = "Glow",
@@ -935,7 +949,7 @@ function SOLHub:CreateWindow(config)
                     ImageColor3 = SOLHub.Theme.AccentColor,
                     ImageTransparency = 1
                 })
-                
+
                 -- Click area for the entire toggle
                 local ToggleClickArea = CreateElement("TextButton", {
                     Name = "ClickArea",
@@ -945,10 +959,10 @@ function SOLHub:CreateWindow(config)
                     Text = "",
                     ZIndex = 5
                 })
-                
+
                 -- Toggle State
                 local Enabled = toggleConfig.Default
-                
+
                 -- Update toggle state visually (simplified for the new design)
                 local function UpdateToggle()
                     if Enabled then
@@ -961,62 +975,62 @@ function SOLHub:CreateWindow(config)
                         Tween(ToggleGlow, {ImageTransparency = 1})
                     end
                 end
-                
+
                 -- Set initial state
                 UpdateToggle()
-                
+
                 -- Set flag if provided
                 if toggleConfig.Flag then
                     SOLHub.Flags[toggleConfig.Flag] = Enabled
                 end
-                
+
                 -- Toggle Interaction
                 ToggleClickArea.MouseEnter:Connect(function()
                     -- Subtle hover effect for the toggle
                     Tween(Toggle, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
-                
+
                 ToggleClickArea.MouseLeave:Connect(function()
                     -- Restore normal background color
                     Tween(Toggle, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
-                
+
                 ToggleClickArea.MouseButton1Click:Connect(function()
                     Enabled = not Enabled
                     UpdateToggle()
-                    
+
                     -- Update flag if provided
                     if toggleConfig.Flag then
                         SOLHub.Flags[toggleConfig.Flag] = Enabled
                     end
-                    
+
                     -- Call callback
                     task.spawn(function()
                         toggleConfig.Callback(Enabled)
                     end)
                 end)
-                
+
                 -- Toggle Methods
                 local ToggleApi = {}
-                
+
                 function ToggleApi:Set(value)
                     Enabled = value
                     UpdateToggle()
-                    
+
                     -- Update flag if provided
                     if toggleConfig.Flag then
                         SOLHub.Flags[toggleConfig.Flag] = Enabled
                     end
-                    
+
                     -- Call callback
                     task.spawn(function()
                         toggleConfig.Callback(Enabled)
                     end)
                 end
-                
+
                 return ToggleApi
             end
-            
+
             function Section:AddSlider(config)
                 config = config or {}
                 local sliderConfig = {
@@ -1029,11 +1043,11 @@ function SOLHub:CreateWindow(config)
                     Flag = config.Flag,
                     Callback = config.Callback or function() end
                 }
-                
+
                 -- Make sure default value is within range and respects increment
                 sliderConfig.Default = math.clamp(sliderConfig.Default, sliderConfig.Min, sliderConfig.Max)
                 sliderConfig.Default = sliderConfig.Min + (math.floor((sliderConfig.Default - sliderConfig.Min) / sliderConfig.Increment + 0.5) * sliderConfig.Increment)
-                
+
                 -- Clean, minimal slider design based on reference image
                 local Slider = CreateElement("Frame", {
                     Name = sliderConfig.Name .. "Slider",
@@ -1042,14 +1056,14 @@ function SOLHub:CreateWindow(config)
                     BorderSizePixel = 0,
                     Size = UDim2.new(1, 0, 0, SOLHub.Configuration.ElementHeight * 1.5)
                 })
-                
+
                 local UICornerSlider = CreateElement("UICorner", {
                     Parent = Slider,
                     CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
                 })
-                
+
                 -- Removing the border stroke for a cleaner look
-                
+
                 local SliderTitle = CreateElement("TextLabel", {
                     Name = "Title",
                     Parent = Slider,
@@ -1062,7 +1076,7 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize,
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
-                
+
                 local SliderValue = CreateElement("TextLabel", {
                     Name = "Value",
                     Parent = Slider,
@@ -1075,7 +1089,7 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize,
                     TextXAlignment = Enum.TextXAlignment.Right
                 })
-                
+
                 local SliderTrack = CreateElement("Frame", {
                     Name = "Track",
                     Parent = Slider,
@@ -1084,12 +1098,12 @@ function SOLHub:CreateWindow(config)
                     Position = UDim2.new(0, 10, 0, SOLHub.Configuration.ElementHeight + 2),
                     Size = UDim2.new(1, -20, 0, 6)
                 })
-                
+
                 local UICornerTrack = CreateElement("UICorner", {
                     Parent = SliderTrack,
                     CornerRadius = UDim.new(1, 0)
                 })
-                
+
                 local SliderFill = CreateElement("Frame", {
                     Name = "Fill",
                     Parent = SliderTrack,
@@ -1097,12 +1111,12 @@ function SOLHub:CreateWindow(config)
                     BorderSizePixel = 0,
                     Size = UDim2.new(0, 0, 1, 0)
                 })
-                
+
                 local UICornerFill = CreateElement("UICorner", {
                     Parent = SliderFill,
                     CornerRadius = UDim.new(1, 0)
                 })
-                
+
                 -- Add cyberpunk glow to the slider fill
                 local SliderGlow = CreateElement("ImageLabel", {
                     Name = "Glow",
@@ -1114,7 +1128,7 @@ function SOLHub:CreateWindow(config)
                     ImageColor3 = SOLHub.Theme.AccentColor,
                     ImageTransparency = 0.5
                 })
-                
+
                 local SliderButton = CreateElement("TextButton", {
                     Name = "Button",
                     Parent = Slider,
@@ -1123,95 +1137,113 @@ function SOLHub:CreateWindow(config)
                     Size = UDim2.new(1, -20, 0, 10),
                     Text = ""
                 })
-                
+
                 -- Slider functionality
                 local Value = sliderConfig.Default
-                local Dragging = false
-                
+                local SliderObject = {}  -- Create a object-specific reference
+                SliderObject.Dragging = false
+
                 -- Update fill based on value
                 local function UpdateSlider()
                     local Percent = (Value - sliderConfig.Min) / (sliderConfig.Max - sliderConfig.Min)
                     SliderFill.Size = UDim2.new(Percent, 0, 1, 0)
                     SliderValue.Text = tostring(RoundNumber(Value, 2)) .. " " .. sliderConfig.ValueName
-                    
+
                     -- Update flag if provided
                     if sliderConfig.Flag then
                         SOLHub.Flags[sliderConfig.Flag] = Value
                     end
-                    
-                    -- Call callback
+
+                    -- Call callback but limit frequency to prevent rapid firing
                     task.spawn(function()
                         sliderConfig.Callback(Value)
                     end)
                 end
-                
+
                 -- Set initial fill
                 UpdateSlider()
-                
+
                 -- Slider interaction with clean, modern design
                 SliderButton.MouseButton1Down:Connect(function()
-                    Dragging = true
+                    SliderObject.Dragging = true
                     -- Slightly darken slider on click
                     Tween(Slider, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
-                end)
-                
-                UserInputService.InputEnded:Connect(function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 and Dragging then
-                        Dragging = false
-                        -- Return to original color when released
-                        Tween(Slider, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
+
+                    -- Handle slider input directly on the current slider
+                    local function handleSliderDrag(input)
+                        if SliderObject.Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                            -- Calculate the new value based on mouse position
+                            local MousePosition = UserInputService:GetMouseLocation()
+                            local RelativePosition = (MousePosition.X - SliderTrack.AbsolutePosition.X) / SliderTrack.AbsoluteSize.X
+                            RelativePosition = math.clamp(RelativePosition, 0, 1)
+
+                            -- Calculate value respecting increment
+                            local NewValue = sliderConfig.Min + (RelativePosition * (sliderConfig.Max - sliderConfig.Min))
+                            NewValue = sliderConfig.Min + (math.floor((NewValue - sliderConfig.Min) / sliderConfig.Increment + 0.5) * sliderConfig.Increment)
+                            NewValue = math.clamp(NewValue, sliderConfig.Min, sliderConfig.Max)
+
+                            if NewValue ~= Value then
+                                Value = NewValue
+                                UpdateSlider()
+                            end
+                        end
                     end
+
+                    -- Create connections that are specific to this slider instance
+                    local inputEndedConnection
+                    local inputChangedConnection
+
+                    inputChangedConnection = UserInputService.InputChanged:Connect(handleSliderDrag)
+
+                    inputEndedConnection = UserInputService.InputEnded:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                            -- Only affect this specific slider
+                            if SliderObject.Dragging then
+                                SliderObject.Dragging = false
+                                -- Return to original color when released
+                                Tween(Slider, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
+
+                                -- Disconnect event handlers to prevent memory leaks
+                                if inputEndedConnection then 
+                                    inputEndedConnection:Disconnect()
+                                end
+                                if inputChangedConnection then
+                                    inputChangedConnection:Disconnect() 
+                                end
+                            end
+                        end
+                    end)
                 end)
-                
+
                 SliderButton.MouseEnter:Connect(function()
                     -- Subtle hover effect 
                     Tween(Slider, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
-                
+
                 SliderButton.MouseLeave:Connect(function()
-                    if not Dragging then
+                    if not SliderObject.Dragging then
                         -- Return to original color when mouse leaves
                         Tween(Slider, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
                     end
                 end)
-                
-                -- Update value on mouse move
-                UserInputService.InputChanged:Connect(function(input)
-                    if Dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-                        -- Calculate the new value based on mouse position
-                        local MousePosition = UserInputService:GetMouseLocation()
-                        local RelativePosition = (MousePosition.X - SliderTrack.AbsolutePosition.X) / SliderTrack.AbsoluteSize.X
-                        RelativePosition = math.clamp(RelativePosition, 0, 1)
-                        
-                        -- Calculate value respecting increment
-                        local NewValue = sliderConfig.Min + (RelativePosition * (sliderConfig.Max - sliderConfig.Min))
-                        NewValue = sliderConfig.Min + (math.floor((NewValue - sliderConfig.Min) / sliderConfig.Increment + 0.5) * sliderConfig.Increment)
-                        NewValue = math.clamp(NewValue, sliderConfig.Min, sliderConfig.Max)
-                        
-                        if NewValue ~= Value then
-                            Value = NewValue
-                            UpdateSlider()
-                        end
-                    end
-                end)
-                
+
                 -- Slider API
                 local SliderApi = {}
-                
+
                 function SliderApi:Set(value)
                     value = math.clamp(value, sliderConfig.Min, sliderConfig.Max)
                     value = sliderConfig.Min + (math.floor((value - sliderConfig.Min) / sliderConfig.Increment + 0.5) * sliderConfig.Increment)
                     Value = value
                     UpdateSlider()
                 end
-                
+
                 function SliderApi:GetValue()
                     return Value
                 end
-                
+
                 return SliderApi
             end
-            
+
             function Section:AddDropdown(config)
                 config = config or {}
                 local dropdownConfig = {
@@ -1222,11 +1254,11 @@ function SOLHub:CreateWindow(config)
                     Callback = config.Callback or function() end,
                     MultiSelection = config.MultiSelection or false
                 }
-                
+
                 -- Validate default value(s)
                 local DefaultOption = nil
                 local SelectedOptions = {}
-                
+
                 if dropdownConfig.MultiSelection then
                     if dropdownConfig.Default and type(dropdownConfig.Default) == "table" then
                         for _, option in pairs(dropdownConfig.Default) do
@@ -1251,7 +1283,7 @@ function SOLHub:CreateWindow(config)
                         DefaultOption = dropdownConfig.Options[1]
                     end
                 end
-                
+
                 -- Create clean, minimal Dropdown based on reference image
                 local Dropdown = CreateElement("Frame", {
                     Name = dropdownConfig.Name .. "Dropdown",
@@ -1261,14 +1293,14 @@ function SOLHub:CreateWindow(config)
                     Size = UDim2.new(1, 0, 0, SOLHub.Configuration.ElementHeight),
                     ClipsDescendants = true
                 })
-                
+
                 local UICornerDropdown = CreateElement("UICorner", {
                     Parent = Dropdown,
                     CornerRadius = UDim.new(0, SOLHub.Configuration.ElementCorner)
                 })
-                
+
                 -- Remove border stroke for a cleaner look
-                
+
                 local DropdownTitle = CreateElement("TextLabel", {
                     Name = "Title",
                     Parent = Dropdown,
@@ -1281,7 +1313,7 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize,
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
-                
+
                 local DropdownSelection = CreateElement("TextLabel", {
                     Name = "Selection",
                     Parent = Dropdown,
@@ -1294,7 +1326,7 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize,
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
-                
+
                 local DropdownArrow = CreateElement("ImageLabel", {
                     Name = "Arrow",
                     Parent = Dropdown,
@@ -1305,7 +1337,7 @@ function SOLHub:CreateWindow(config)
                     ImageColor3 = SOLHub.Theme.TextColor,
                     Rotation = 0
                 })
-                
+
                 local DropdownButton = CreateElement("TextButton", {
                     Name = "Button",
                     Parent = Dropdown,
@@ -1313,7 +1345,7 @@ function SOLHub:CreateWindow(config)
                     Size = UDim2.new(1, 0, 0, SOLHub.Configuration.ElementHeight),
                     Text = ""
                 })
-                
+
                 local DropdownContent = CreateElement("ScrollingFrame", {
                     Name = "Content",
                     Parent = Dropdown,
@@ -1326,13 +1358,13 @@ function SOLHub:CreateWindow(config)
                     ScrollBarImageColor3 = SOLHub.Theme.AccentColor,
                     Visible = false
                 })
-                
+
                 local DropdownContentLayout = CreateElement("UIListLayout", {
                     Parent = DropdownContent,
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     Padding = UDim.new(0, 2)
                 })
-                
+
                 local DropdownContentPadding = CreateElement("UIPadding", {
                     Parent = DropdownContent,
                     PaddingLeft = UDim.new(0, 5),
@@ -1340,7 +1372,7 @@ function SOLHub:CreateWindow(config)
                     PaddingTop = UDim.new(0, 5),
                     PaddingBottom = UDim.new(0, 5)
                 })
-                
+
                 -- Populate dropdown options
                 local function AddOption(option)
                     local OptionButton = CreateElement("TextButton", {
@@ -1355,52 +1387,52 @@ function SOLHub:CreateWindow(config)
                         TextSize = SOLHub.Configuration.TextSize,
                         AutoButtonColor = false
                     })
-                    
+
                     local UICornerOption = CreateElement("UICorner", {
                         Parent = OptionButton,
                         CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                     })
-                    
+
                     local isSelected = false
-                    
+
                     if dropdownConfig.MultiSelection then
                         isSelected = SelectedOptions[option] == true
                     else
                         isSelected = option == DefaultOption
                     end
-                    
+
                     -- Show selection for default values
                     if isSelected then
                         OptionButton.BackgroundColor3 = SOLHub.Theme.AccentColor
                         OptionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
                     end
-                    
+
                     -- Option interaction
                     OptionButton.MouseEnter:Connect(function()
                         if not isSelected then
                             Tween(OptionButton, {BackgroundColor3 = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
                         end
                     end)
-                    
+
                     OptionButton.MouseLeave:Connect(function()
                         if not isSelected then
                             Tween(OptionButton, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
                         end
                     end)
-                    
+
                     OptionButton.MouseButton1Click:Connect(function()
                         if dropdownConfig.MultiSelection then
                             -- Toggle selection for this option
                             isSelected = not isSelected
                             SelectedOptions[option] = isSelected or nil
-                            
+
                             -- Update visual
                             if isSelected then
                                 Tween(OptionButton, {BackgroundColor3 = SOLHub.Theme.AccentColor, TextColor3 = Color3.fromRGB(255, 255, 255)})
                             else
                                 Tween(OptionButton, {BackgroundColor3 = SOLHub.Theme.ElementBackground, TextColor3 = SOLHub.Theme.TextColor})
                             end
-                            
+
                             -- Update selection text
                             local selectedCount = 0
                             local selectedList = {}
@@ -1410,7 +1442,7 @@ function SOLHub:CreateWindow(config)
                                     table.insert(selectedList, opt)
                                 end
                             end
-                            
+
                             if selectedCount == 0 then
                                 DropdownSelection.Text = "None selected"
                             elseif selectedCount <= 2 then
@@ -1418,7 +1450,7 @@ function SOLHub:CreateWindow(config)
                             else
                                 DropdownSelection.Text = selectedCount .. " options selected"
                             end
-                            
+
                             -- Update flag and call callback
                             if dropdownConfig.Flag then
                                 SOLHub.Flags[dropdownConfig.Flag] = selectedList
@@ -1426,7 +1458,7 @@ function SOLHub:CreateWindow(config)
                             task.spawn(function()
                                 dropdownConfig.Callback(selectedList)
                             end)
-                            
+
                         else
                             -- Single selection - deselect old, select new
                             for _, child in pairs(DropdownContent:GetChildren()) do
@@ -1434,12 +1466,12 @@ function SOLHub:CreateWindow(config)
                                     Tween(child, {BackgroundColor3 = SOLHub.Theme.ElementBackground, TextColor3 = SOLHub.Theme.TextColor})
                                 end
                             end
-                            
+
                             isSelected = true
                             DefaultOption = option
                             DropdownSelection.Text = option
                             Tween(OptionButton, {BackgroundColor3 = SOLHub.Theme.AccentColor, TextColor3 = Color3.fromRGB(255, 255, 255)})
-                            
+
                             -- Update flag and call callback
                             if dropdownConfig.Flag then
                                 SOLHub.Flags[dropdownConfig.Flag] = option
@@ -1447,27 +1479,27 @@ function SOLHub:CreateWindow(config)
                             task.spawn(function()
                                 dropdownConfig.Callback(option)
                             end)
-                            
+
                             -- Close dropdown after selection for single selection mode
                             CloseDropdown()
                         end
                     end)
-                    
+
                     return OptionButton
                 end
-                
+
                 for _, option in pairs(dropdownConfig.Options) do
                     AddOption(option)
                 end
-                
+
                 -- Adjust content canvas size
                 DropdownContentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
                     DropdownContent.CanvasSize = UDim2.new(0, 0, 0, DropdownContentLayout.AbsoluteContentSize.Y + 10)
                 end)
-                
+
                 -- Dropdown open/close functionality
                 local IsOpen = false
-                
+
                 -- Function to close the dropdown
                 function CloseDropdown()
                     IsOpen = false
@@ -1475,11 +1507,11 @@ function SOLHub:CreateWindow(config)
                     Tween(DropdownArrow, {Rotation = 0})
                     DropdownContent.Visible = false
                 end
-                
+
                 -- Open/close dropdown on button click
                 DropdownButton.MouseButton1Click:Connect(function()
                     IsOpen = not IsOpen
-                    
+
                     if IsOpen then
                         -- Calculate content height (limited to 150px)
                         local contentHeight = math.min(DropdownContentLayout.AbsoluteContentSize.Y + 10, 150)
@@ -1491,31 +1523,31 @@ function SOLHub:CreateWindow(config)
                         CloseDropdown()
                     end
                 end)
-                
+
                 -- Hover effect for button with cleaner style
                 DropdownButton.MouseEnter:Connect(function()
                     -- Slightly darken background on hover
                     Tween(Dropdown, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
-                
+
                 DropdownButton.MouseLeave:Connect(function()
                     -- Return to original color when not hovering
                     Tween(Dropdown, {BackgroundColor3 = SOLHub.Theme.ElementBackground}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
-                
+
                 -- Close dropdown when clicking elsewhere
                 UserInputService.InputBegan:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         local absPos = Dropdown.AbsolutePosition
                         local absSize = Dropdown.AbsoluteSize
                         local mousePos = UserInputService:GetMouseLocation()
-                        
+
                         if IsOpen and (mousePos.X < absPos.X or mousePos.X > absPos.X + absSize.X or mousePos.Y < absPos.Y or mousePos.Y > absPos.Y + absSize.Y) then
                             CloseDropdown()
                         end
                     end
                 end)
-                
+
                 -- Set initial values for flag
                 if dropdownConfig.Flag then
                     if dropdownConfig.MultiSelection then
@@ -1530,7 +1562,7 @@ function SOLHub:CreateWindow(config)
                         SOLHub.Flags[dropdownConfig.Flag] = DefaultOption
                     end
                 end
-                
+
                 -- Set initial selection text for multi-selection
                 if dropdownConfig.MultiSelection then
                     local selectedCount = 0
@@ -1541,7 +1573,7 @@ function SOLHub:CreateWindow(config)
                             table.insert(selectedList, option)
                         end
                     end
-                    
+
                     if selectedCount == 0 then
                         DropdownSelection.Text = "None selected"
                     elseif selectedCount <= 2 then
@@ -1550,21 +1582,21 @@ function SOLHub:CreateWindow(config)
                         DropdownSelection.Text = selectedCount .. " options selected"
                     end
                 end
-                
+
                 -- Dropdown API
                 local DropdownApi = {}
-                
+
                 function DropdownApi:Set(value)
                     if dropdownConfig.MultiSelection and type(value) == "table" then
                         -- Clear current selections
                         SelectedOptions = {}
-                        
+
                         -- Update each option
                         for _, child in pairs(DropdownContent:GetChildren()) do
                             if child:IsA("TextButton") then
                                 local optionName = child.Text
                                 local selected = false
-                                
+
                                 -- Check if this option is in the value table
                                 for _, selectedOption in pairs(value) do
                                     if optionName == selectedOption then
@@ -1573,7 +1605,7 @@ function SOLHub:CreateWindow(config)
                                         break
                                     end
                                 end
-                                
+
                                 -- Update visual
                                 if selected then
                                     Tween(child, {BackgroundColor3 = SOLHub.Theme.AccentColor, TextColor3 = Color3.fromRGB(255, 255, 255)})
@@ -1582,7 +1614,7 @@ function SOLHub:CreateWindow(config)
                                 end
                             end
                         end
-                        
+
                         -- Update selection text
                         local selectedCount = 0
                         local selectedList = {}
@@ -1592,7 +1624,7 @@ function SOLHub:CreateWindow(config)
                                 table.insert(selectedList, option)
                             end
                         end
-                        
+
                         if selectedCount == 0 then
                             DropdownSelection.Text = "None selected"
                         elseif selectedCount <= 2 then
@@ -1600,7 +1632,7 @@ function SOLHub:CreateWindow(config)
                         else
                             DropdownSelection.Text = selectedCount .. " options selected"
                         end
-                        
+
                         -- Update flag and call callback
                         if dropdownConfig.Flag then
                             SOLHub.Flags[dropdownConfig.Flag] = selectedList
@@ -1608,12 +1640,12 @@ function SOLHub:CreateWindow(config)
                         task.spawn(function()
                             dropdownConfig.Callback(selectedList)
                         end)
-                        
+
                     elseif not dropdownConfig.MultiSelection and type(value) == "string" then
                         -- Update the dropdown value directly without needing to access children
                         DefaultOption = value
                         DropdownSelection.Text = value
-                        
+
                         -- Update flag and call callback
                         if dropdownConfig.Flag then
                             SOLHub.Flags[dropdownConfig.Flag] = value
@@ -1621,7 +1653,7 @@ function SOLHub:CreateWindow(config)
                         task.spawn(function()
                             dropdownConfig.Callback(value)
                         end)
-                                
+
                         -- Skip attempting to iterate through children in mock environment
                         if DropdownContent.ClassName ~= "MockScrollingFrame" then
                             -- Find the option and simulate a click
@@ -1633,7 +1665,7 @@ function SOLHub:CreateWindow(config)
                                             Tween(otherChild, {BackgroundColor3 = SOLHub.Theme.ElementBackground, TextColor3 = SOLHub.Theme.TextColor})
                                         end
                                     end
-                                
+
                                     -- Select this option
                                     Tween(child, {BackgroundColor3 = SOLHub.Theme.AccentColor, TextColor3 = Color3.fromRGB(255, 255, 255)})
                                     break
@@ -1642,23 +1674,23 @@ function SOLHub:CreateWindow(config)
                         end
                     end
                 end
-                
+
                 function DropdownApi:Refresh(options, keepSelection)
                     dropdownConfig.Options = options
-                    
+
                     -- Skip children manipulation in mock environment
                     if DropdownContent.ClassName == "MockScrollingFrame" then
                         -- Just update the options data
                         return
                     end
-                    
+
                     -- Clear current options
                     for _, child in pairs(DropdownContent:GetChildren()) do
                         if child:IsA("TextButton") then
                             child:Destroy()
                         end
                     end
-                    
+
                     -- Track old selections if keeping them
                     local oldSelectedOptions = {}
                     if keepSelection then
@@ -1668,11 +1700,11 @@ function SOLHub:CreateWindow(config)
                             oldSelectedOptions[DefaultOption] = true
                         end
                     end
-                    
+
                     -- Reset selection data
                     SelectedOptions = {}
                     DefaultOption = nil
-                    
+
                     -- Add new options and restore selections if keeping them
                     for _, option in pairs(options) do
                         if keepSelection and oldSelectedOptions[option] then
@@ -1682,13 +1714,13 @@ function SOLHub:CreateWindow(config)
                                 DefaultOption = option
                             end
                         end
-                        
+
                         -- Skip AddOption in mock environment
                         if DropdownContent.ClassName ~= "MockScrollingFrame" then
                             AddOption(option)
                         end
                     end
-                    
+
                     -- Update selection text
                     if dropdownConfig.MultiSelection then
                         local selectedCount = 0
@@ -1699,7 +1731,7 @@ function SOLHub:CreateWindow(config)
                                 table.insert(selectedList, option)
                             end
                         end
-                        
+
                         if selectedCount == 0 then
                             DropdownSelection.Text = "None selected"
                         elseif selectedCount <= 2 then
@@ -1710,7 +1742,7 @@ function SOLHub:CreateWindow(config)
                     else
                         DropdownSelection.Text = DefaultOption or "Select option..."
                     end
-                    
+
                     -- Update flag
                     if dropdownConfig.Flag then
                         if dropdownConfig.MultiSelection then
@@ -1726,10 +1758,10 @@ function SOLHub:CreateWindow(config)
                         end
                     end
                 end
-                
+
                 return DropdownApi
             end
-            
+
             function Section:AddColorPicker(config)
                 config = config or {}
                 local colorConfig = {
@@ -1738,7 +1770,7 @@ function SOLHub:CreateWindow(config)
                     Flag = config.Flag,
                     Callback = config.Callback or function() end
                 }
-                
+
                 local ColorPicker = CreateElement("Frame", {
                     Name = colorConfig.Name .. "ColorPicker",
                     Parent = SectionContent,
@@ -1747,19 +1779,19 @@ function SOLHub:CreateWindow(config)
                     Size = UDim2.new(1, 0, 0, SOLHub.Configuration.ElementHeight),
                     ClipsDescendants = true
                 })
-                
+
                 local UICornerColorPicker = CreateElement("UICorner", {
                     Parent = ColorPicker,
                     CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                 })
-                
+
                 local ColorPickerStroke = CreateElement("UIStroke", {
                     Parent = ColorPicker,
                     -- ApplyStrokeMode has a default value in CreateElement
                     Color = SOLHub.Theme.ElementBorder,
                     Thickness = 1
                 })
-                
+
                 local ColorTitle = CreateElement("TextLabel", {
                     Name = "Title",
                     Parent = ColorPicker,
@@ -1772,7 +1804,7 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize,
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
-                
+
                 local ColorDisplay = CreateElement("Frame", {
                     Name = "ColorDisplay",
                     Parent = ColorPicker,
@@ -1781,12 +1813,12 @@ function SOLHub:CreateWindow(config)
                     Position = UDim2.new(1, -50, 0.5, -10),
                     Size = UDim2.new(0, 40, 0, 20)
                 })
-                
+
                 local UICornerDisplay = CreateElement("UICorner", {
                     Parent = ColorDisplay,
                     CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                 })
-                
+
                 local ColorGlow = CreateElement("ImageLabel", {
                     Name = "Glow",
                     Parent = ColorDisplay,
@@ -1797,7 +1829,7 @@ function SOLHub:CreateWindow(config)
                     ImageColor3 = colorConfig.Default,
                     ImageTransparency = 0.6
                 })
-                
+
                 local ColorButton = CreateElement("TextButton", {
                     Name = "Button",
                     Parent = ColorPicker,
@@ -1805,7 +1837,7 @@ function SOLHub:CreateWindow(config)
                     Size = UDim2.new(1, 0, 1, 0),
                     Text = ""
                 })
-                
+
                 -- Color Picker Expanded UI
                 local ColorPickerExpanded = CreateElement("Frame", {
                     Name = "Expanded",
@@ -1816,12 +1848,12 @@ function SOLHub:CreateWindow(config)
                     Size = UDim2.new(1, 0, 0, 0),
                     Visible = false
                 })
-                
+
                 local UICornerExpanded = CreateElement("UICorner", {
                     Parent = ColorPickerExpanded,
                     CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                 })
-                
+
                 -- Color picker content to be added when expanded
                 local ColorPickerContent = CreateElement("Frame", {
                     Name = "Content",
@@ -1830,32 +1862,32 @@ function SOLHub:CreateWindow(config)
                     Position = UDim2.new(0, 10, 0, 10),
                     Size = UDim2.new(1, -20, 1, -20)
                 })
-                
+
                 -- Set initial flag value
                 local SelectedColor = colorConfig.Default
                 if colorConfig.Flag then
                     SOLHub.Flags[colorConfig.Flag] = SelectedColor
                 end
-                
+
                 -- Color picker functionality
                 local IsOpen = false
-                
+
                 -- Function to close the color picker
                 local function CloseColorPicker()
                     IsOpen = false
                     Tween(ColorPicker, {Size = UDim2.new(1, 0, 0, SOLHub.Configuration.ElementHeight)})
                     ColorPickerExpanded.Visible = false
                 end
-                
+
                 -- Open/close color picker on button click
                 ColorButton.MouseButton1Click:Connect(function()
                     IsOpen = not IsOpen
-                    
+
                     if IsOpen then
                         Tween(ColorPicker, {Size = UDim2.new(1, 0, 0, SOLHub.Configuration.ElementHeight + 170)})
                         ColorPickerExpanded.Size = UDim2.new(1, 0, 0, 160)
                         ColorPickerExpanded.Visible = true
-                        
+
                         -- Create the color picker UI elements
                         if not ColorPickerContent:FindFirstChild("ColorSpace") then
                             -- The main color space (hue and saturation)
@@ -1868,12 +1900,12 @@ function SOLHub:CreateWindow(config)
                                 Size = UDim2.new(1, -30, 0, 100),
                                 Image = "rbxassetid://4155801252"
                             })
-                            
+
                             local UICornerColorSpace = CreateElement("UICorner", {
                                 Parent = ColorSpace,
                                 CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                             })
-                            
+
                             local ColorSpaceSelector = CreateElement("Frame", {
                                 Name = "Selector",
                                 Parent = ColorSpace,
@@ -1884,12 +1916,12 @@ function SOLHub:CreateWindow(config)
                                 Position = UDim2.new(0.5, 0, 0.5, 0),
                                 Size = UDim2.new(0, 6, 0, 6)
                             })
-                            
+
                             local UICornerSelector = CreateElement("UICorner", {
                                 Parent = ColorSpaceSelector,
                                 CornerRadius = UDim.new(1, 0)
                             })
-                            
+
                             -- The value/brightness slider
                             local ValueSlider = CreateElement("Frame", {
                                 Name = "ValueSlider",
@@ -1899,12 +1931,12 @@ function SOLHub:CreateWindow(config)
                                 Position = UDim2.new(1, -20, 0, 0),
                                 Size = UDim2.new(0, 20, 0, 100)
                             })
-                            
+
                             local UICornerValueSlider = CreateElement("UICorner", {
                                 Parent = ValueSlider,
                                 CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                             })
-                            
+
                             local ValueGradient = CreateElement("UIGradient", {
                                 Parent = ValueSlider,
                                 Color = ColorSequence.new({
@@ -1913,7 +1945,7 @@ function SOLHub:CreateWindow(config)
                                 }),
                                 Rotation = 90
                             })
-                            
+
                             local ValueSliderSelector = CreateElement("Frame", {
                                 Name = "Selector",
                                 Parent = ValueSlider,
@@ -1923,7 +1955,7 @@ function SOLHub:CreateWindow(config)
                                 Position = UDim2.new(0, 0, 0.5, 0),
                                 Size = UDim2.new(1, 0, 0, 3)
                             })
-                            
+
                             -- RGB Input fields
                             local RGBContainer = CreateElement("Frame", {
                                 Name = "RGBContainer",
@@ -1932,14 +1964,14 @@ function SOLHub:CreateWindow(config)
                                 Position = UDim2.new(0, 0, 0, 110),
                                 Size = UDim2.new(1, 0, 0, 30)
                             })
-                            
+
                             local RGBLayout = CreateElement("UIListLayout", {
                                 Parent = RGBContainer,
                                 FillDirection = Enum.FillDirection.Horizontal,
                                 Padding = UDim.new(0, 5),
                                 SortOrder = Enum.SortOrder.LayoutOrder
                             })
-                            
+
                             -- RGB input functions
                             local function CreateRGBInput(name, value, order)
                                 local RGBInput = CreateElement("Frame", {
@@ -1950,12 +1982,12 @@ function SOLHub:CreateWindow(config)
                                     Size = UDim2.new(0, 70, 1, 0),
                                     LayoutOrder = order
                                 })
-                                
+
                                 local UICornerRGB = CreateElement("UICorner", {
                                     Parent = RGBInput,
                                     CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                                 })
-                                
+
                                 local RGBLabel = CreateElement("TextLabel", {
                                     Name = "Label",
                                     Parent = RGBInput,
@@ -1969,7 +2001,7 @@ function SOLHub:CreateWindow(config)
                                                Color3.fromRGB(120, 120, 255),
                                     TextSize = SOLHub.Configuration.TextSize
                                 })
-                                
+
                                 local RGBTextBox = CreateElement("TextBox", {
                                     Name = "Input",
                                     Parent = RGBInput,
@@ -1982,44 +2014,44 @@ function SOLHub:CreateWindow(config)
                                     TextSize = SOLHub.Configuration.TextSize,
                                     ClearTextOnFocus = true
                                 })
-                                
+
                                 -- Input validation
                                 RGBTextBox.FocusLost:Connect(function(enterPressed)
                                     local inputValue = tonumber(RGBTextBox.Text)
                                     if inputValue then
                                         inputValue = math.clamp(math.floor(inputValue), 0, 255)
-                                        
+
                                         -- Update the color based on RGB input
                                         local r, g, b = SelectedColor.R, SelectedColor.G, SelectedColor.B
                                         if name == "R" then r = inputValue/255
                                         elseif name == "G" then g = inputValue/255
                                         else b = inputValue/255 end
-                                        
+
                                         SelectedColor = Color3.new(r, g, b)
                                         UpdateColorPicker(SelectedColor)
                                     end
-                                    
+
                                     RGBTextBox.Text = tostring(math.floor(SelectedColor[name] * 255))
                                 end)
-                                
+
                                 return RGBTextBox
                             end
-                            
+
                             local RInput = CreateRGBInput("R", math.floor(SelectedColor.R * 255), 1)
                             local GInput = CreateRGBInput("G", math.floor(SelectedColor.G * 255), 2)
                             local BInput = CreateRGBInput("B", math.floor(SelectedColor.B * 255), 3)
-                            
+
                             -- Color selection functions
                             local function UpdateColorFromHSV(h, s, v)
                                 SelectedColor = Color3.fromHSV(h, s, v)
                                 ColorDisplay.BackgroundColor3 = SelectedColor
                                 ColorGlow.ImageColor3 = SelectedColor
-                                
+
                                 -- Update RGB inputs
                                 RInput.Text = tostring(math.floor(SelectedColor.R * 255))
                                 GInput.Text = tostring(math.floor(SelectedColor.G * 255))
                                 BInput.Text = tostring(math.floor(SelectedColor.B * 255))
-                                
+
                                 -- Update flag and callback
                                 if colorConfig.Flag then
                                     SOLHub.Flags[colorConfig.Flag] = SelectedColor
@@ -2028,12 +2060,12 @@ function SOLHub:CreateWindow(config)
                                     colorConfig.Callback(SelectedColor)
                                 end)
                             end
-                            
+
                             -- Initial position of selectors based on the current color
                             local h, s, v = Color3.toHSV(SelectedColor)
                             ColorSpaceSelector.Position = UDim2.new(s, 0, 1 - h, 0)
                             ValueSliderSelector.Position = UDim2.new(0, 0, 1 - v, 0)
-                            
+
                             -- Function to handle color space selection
                             local function UpdateColorSpace()
                                 local absPos = ColorSpace.AbsolutePosition
@@ -2041,40 +2073,40 @@ function SOLHub:CreateWindow(config)
                                 local mousePos = UserInputService:GetMouseLocation()
                                 local relativeX = math.clamp((mousePos.X - absPos.X) / absSize.X, 0, 1)
                                 local relativeY = math.clamp((mousePos.Y - absPos.Y) / absSize.Y, 0, 1)
-                                
+
                                 ColorSpaceSelector.Position = UDim2.new(relativeX, 0, relativeY, 0)
-                                
+
                                 -- Get hue and saturation from the color space
                                 local hue = 1 - relativeY
                                 local saturation = relativeX
                                 local value = 1 - ValueSliderSelector.Position.Y.Scale
-                                
+
                                 UpdateColorFromHSV(hue, saturation, value)
-                                
+
                                 -- Update the value slider gradient based on the selected hue and saturation
                                 ValueGradient.Color = ColorSequence.new({
                                     ColorSequenceKeypoint.new(0, Color3.fromHSV(hue, saturation, 0)),
                                     ColorSequenceKeypoint.new(1, Color3.fromHSV(hue, saturation, 1))
                                 })
                             end
-                            
+
                             -- Function to handle value slider selection
                             local function UpdateValueSlider()
                                 local absPos = ValueSlider.AbsolutePosition
                                 local absSize = ValueSlider.AbsoluteSize
                                 local mousePos = UserInputService:GetMouseLocation()
                                 local relativeY = math.clamp((mousePos.Y - absPos.Y) / absSize.Y, 0, 1)
-                                
+
                                 ValueSliderSelector.Position = UDim2.new(0, 0, relativeY, 0)
-                                
+
                                 -- Get hue and saturation from the current color space selector position
                                 local hue = 1 - ColorSpaceSelector.Position.Y.Scale
                                 local saturation = ColorSpaceSelector.Position.X.Scale
                                 local value = 1 - relativeY
-                                
+
                                 UpdateColorFromHSV(hue, saturation, value)
                             end
-                            
+
                             -- Color space interaction
                             local ColorSpaceButton = CreateElement("TextButton", {
                                 Name = "Button",
@@ -2083,26 +2115,26 @@ function SOLHub:CreateWindow(config)
                                 Size = UDim2.new(1, 0, 1, 0),
                                 Text = ""
                             })
-                            
+
                             local ColorSpaceDragging = false
-                            
+
                             ColorSpaceButton.MouseButton1Down:Connect(function()
                                 ColorSpaceDragging = true
                                 UpdateColorSpace()
                             end)
-                            
+
                             UserInputService.InputEnded:Connect(function(input)
                                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                                     ColorSpaceDragging = false
                                 end
                             end)
-                            
+
                             UserInputService.InputChanged:Connect(function(input)
                                 if input.UserInputType == Enum.UserInputType.MouseMovement and ColorSpaceDragging then
                                     UpdateColorSpace()
                                 end
                             end)
-                            
+
                             -- Value slider interaction
                             local ValueSliderButton = CreateElement("TextButton", {
                                 Name = "Button",
@@ -2111,20 +2143,20 @@ function SOLHub:CreateWindow(config)
                                 Size = UDim2.new(1, 0, 1, 0),
                                 Text = ""
                             })
-                            
+
                             local ValueSliderDragging = false
-                            
+
                             ValueSliderButton.MouseButton1Down:Connect(function()
                                 ValueSliderDragging = true
                                 UpdateValueSlider()
                             end)
-                            
+
                             UserInputService.InputEnded:Connect(function(input)
                                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                                     ValueSliderDragging = false
                                 end
                             end)
-                            
+
                             UserInputService.InputChanged:Connect(function(input)
                                 if input.UserInputType == Enum.UserInputType.MouseMovement and ValueSliderDragging then
                                     UpdateValueSlider()
@@ -2135,13 +2167,13 @@ function SOLHub:CreateWindow(config)
                         CloseColorPicker()
                     end
                 end)
-                
+
                 -- Function to update the color picker UI
                 function UpdateColorPicker(color)
                     SelectedColor = color
                     ColorDisplay.BackgroundColor3 = color
                     ColorGlow.ImageColor3 = color
-                    
+
                     -- Update flag and callback
                     if colorConfig.Flag then
                         SOLHub.Flags[colorConfig.Flag] = color
@@ -2149,31 +2181,31 @@ function SOLHub:CreateWindow(config)
                     task.spawn(function()
                         colorConfig.Callback(color)
                     end)
-                    
+
                     -- If the color picker UI exists, update it
                     local ColorSpace = ColorPickerContent:FindFirstChild("ColorSpace")
                     if ColorSpace then
                         local h, s, v = Color3.toHSV(color)
                         ColorSpace.Selector.Position = UDim2.new(s, 0, 1 - h, 0)
-                        
+
                         local ValueSlider = ColorPickerContent:FindFirstChild("ValueSlider")
                         if ValueSlider then
                             ValueSlider.Selector.Position = UDim2.new(0, 0, 1 - v, 0)
-                            
+
                             -- Update value slider gradient
                             ValueSlider.UIGradient.Color = ColorSequence.new({
                                 ColorSequenceKeypoint.new(0, Color3.fromHSV(h, s, 0)),
                                 ColorSequenceKeypoint.new(1, Color3.fromHSV(h, s, 1))
                             })
                         end
-                        
+
                         -- Update RGB inputs
                         local RGBContainer = ColorPickerContent:FindFirstChild("RGBContainer")
                         if RGBContainer then
                             local RInput = RGBContainer:FindFirstChild("RInput")
                             local GInput = RGBContainer:FindFirstChild("GInput")
                             local BInput = RGBContainer:FindFirstChild("BInput")
-                            
+
                             if RInput and GInput and BInput then
                                 RInput.Input.Text = tostring(math.floor(color.R * 255))
                                 GInput.Input.Text = tostring(math.floor(color.G * 255))
@@ -2182,39 +2214,39 @@ function SOLHub:CreateWindow(config)
                         end
                     end
                 end
-                
+
                 -- Hover effect
                 ColorButton.MouseEnter:Connect(function()
                     Tween(ColorPickerStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
-                
+
                 ColorButton.MouseLeave:Connect(function()
                     Tween(ColorPickerStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
-                
+
                 -- Close color picker when clicking elsewhere
                 UserInputService.InputBegan:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         local absPos = ColorPicker.AbsolutePosition
                         local absSize = ColorPicker.AbsoluteSize
                         local mousePos = UserInputService:GetMouseLocation()
-                        
+
                         if IsOpen and (mousePos.X < absPos.X or mousePos.X > absPos.X + absSize.X or mousePos.Y < absPos.Y or mousePos.Y > absPos.Y + absSize.Y) then
                             CloseColorPicker()
                         end
                     end
                 end)
-                
+
                 -- ColorPicker API
                 local ColorPickerApi = {}
-                
+
                 function ColorPickerApi:Set(color)
                     UpdateColorPicker(color)
                 end
-                
+
                 return ColorPickerApi
             end
-            
+
             function Section:AddTextbox(config)
                 config = config or {}
                 local textboxConfig = {
@@ -2225,7 +2257,7 @@ function SOLHub:CreateWindow(config)
                     Flag = config.Flag,
                     Callback = config.Callback or function() end
                 }
-                
+
                 local Textbox = CreateElement("Frame", {
                     Name = textboxConfig.Name .. "Textbox",
                     Parent = SectionContent,
@@ -2233,19 +2265,19 @@ function SOLHub:CreateWindow(config)
                     BorderSizePixel = 0,
                     Size = UDim2.new(1, 0, 0, SOLHub.Configuration.ElementHeight)
                 })
-                
+
                 local UICornerTextbox = CreateElement("UICorner", {
                     Parent = Textbox,
                     CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                 })
-                
+
                 local TextboxStroke = CreateElement("UIStroke", {
                     Parent = Textbox,
                     -- ApplyStrokeMode has a default value in CreateElement
                     Color = SOLHub.Theme.ElementBorder,
                     Thickness = 1
                 })
-                
+
                 local TextboxTitle = CreateElement("TextLabel", {
                     Name = "Title",
                     Parent = Textbox,
@@ -2258,7 +2290,7 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize,
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
-                
+
                 local TextboxInput = CreateElement("TextBox", {
                     Name = "Input",
                     Parent = Textbox,
@@ -2274,51 +2306,51 @@ function SOLHub:CreateWindow(config)
                     TextXAlignment = Enum.TextXAlignment.Left,
                     ClearTextOnFocus = textboxConfig.TextDisappear
                 })
-                
+
                 -- Textbox interaction
                 TextboxInput.Focused:Connect(function()
                     Tween(TextboxStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                 end)
-                
+
                 TextboxInput.FocusLost:Connect(function(enterPressed)
                     Tween(TextboxStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
-                    
+
                     -- Update flag
                     if textboxConfig.Flag then
                         SOLHub.Flags[textboxConfig.Flag] = TextboxInput.Text
                     end
-                    
+
                     -- Call callback
                     task.spawn(function()
                         textboxConfig.Callback(TextboxInput.Text)
                     end)
                 end)
-                
+
                 -- Set initial flag value
                 if textboxConfig.Flag then
                     SOLHub.Flags[textboxConfig.Flag] = textboxConfig.Default
                 end
-                
+
                 -- Textbox API
                 local TextboxApi = {}
-                
+
                 function TextboxApi:Set(text)
                     TextboxInput.Text = text
-                    
+
                     -- Update flag
                     if textboxConfig.Flag then
                         SOLHub.Flags[textboxConfig.Flag] = text
                     end
-                    
+
                     -- Call callback
                     task.spawn(function()
                         textboxConfig.Callback(text)
                     end)
                 end
-                
+
                 return TextboxApi
             end
-            
+
             function Section:AddKeybind(config)
                 config = config or {}
                 local keybindConfig = {
@@ -2328,7 +2360,7 @@ function SOLHub:CreateWindow(config)
                     Callback = config.Callback or function() end,
                     ChangedCallback = config.ChangedCallback
                 }
-                
+
                 local Keybind = CreateElement("Frame", {
                     Name = keybindConfig.Name .. "Keybind",
                     Parent = SectionContent,
@@ -2336,19 +2368,19 @@ function SOLHub:CreateWindow(config)
                     BorderSizePixel = 0,
                     Size = UDim2.new(1, 0, 0, SOLHub.Configuration.ElementHeight)
                 })
-                
+
                 local UICornerKeybind = CreateElement("UICorner", {
                     Parent = Keybind,
                     CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                 })
-                
+
                 local KeybindStroke = CreateElement("UIStroke", {
                     Parent = Keybind,
                     -- ApplyStrokeMode has a default value in CreateElement
                     Color = SOLHub.Theme.ElementBorder,
                     Thickness = 1
                 })
-                
+
                 local KeybindTitle = CreateElement("TextLabel", {
                     Name = "Title",
                     Parent = Keybind,
@@ -2361,7 +2393,7 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize,
                     TextXAlignment = Enum.TextXAlignment.Left
                 })
-                
+
                 local KeybindButton = CreateElement("TextButton", {
                     Name = "Button",
                     Parent = Keybind,
@@ -2375,37 +2407,37 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize - 2,
                     AutoButtonColor = false
                 })
-                
+
                 local UICornerButton = CreateElement("UICorner", {
                     Parent = KeybindButton,
                     CornerRadius = UDim.new(0, SOLHub.Configuration.UICorner)
                 })
-                
+
                 local KeybindButtonStroke = CreateElement("UIStroke", {
                     Parent = KeybindButton,
                     -- ApplyStrokeMode has a default value in CreateElement
                     Color = SOLHub.Theme.ElementBorder,
                     Thickness = 1
                 })
-                
+
                 -- Keybind functionality
                 local CurrentKey = keybindConfig.Default
                 local IsChangingKey = false
-                
+
                 -- Set initial flag value
                 if keybindConfig.Flag and CurrentKey then
                     SOLHub.Flags[keybindConfig.Flag] = CurrentKey
                 end
-                
+
                 -- Update keybind display
                 local function UpdateKeybind()
                     KeybindButton.Text = CurrentKey and CurrentKey.Name or "None"
-                    
+
                     -- Update flag
                     if keybindConfig.Flag then
                         SOLHub.Flags[keybindConfig.Flag] = CurrentKey
                     end
-                    
+
                     -- Call changed callback if provided
                     if keybindConfig.ChangedCallback and CurrentKey then
                         task.spawn(function()
@@ -2413,14 +2445,14 @@ function SOLHub:CreateWindow(config)
                         end)
                     end
                 end
-                
+
                 -- Start changing keybind
                 KeybindButton.MouseButton1Click:Connect(function()
                     IsChangingKey = true
                     KeybindButton.Text = "..."
                     Tween(KeybindButtonStroke, {Color = SOLHub.Theme.AccentColor})
                 end)
-                
+
                 -- Detect key presses for binding
                 UserInputService.InputBegan:Connect(function(input, gameProcessed)
                     if not gameProcessed then
@@ -2441,50 +2473,50 @@ function SOLHub:CreateWindow(config)
                         end
                     end
                 end)
-                
+
                 -- Hovering effects
                 KeybindButton.MouseEnter:Connect(function()
                     if not IsChangingKey then
                         Tween(KeybindButtonStroke, {Color = SOLHub.Theme.AccentColor}, SOLHub.Configuration.HoverAnimationDuration)
                     end
                 end)
-                
+
                 KeybindButton.MouseLeave:Connect(function()
                     if not IsChangingKey then
                         Tween(KeybindButtonStroke, {Color = SOLHub.Theme.ElementBorder}, SOLHub.Configuration.HoverAnimationDuration)
                     end
                 end)
-                
+
                 -- Keybind API
                 local KeybindApi = {}
-                
+
                 function KeybindApi:Set(key)
                     CurrentKey = key
                     IsChangingKey = false
                     UpdateKeybind()
                 end
-                
+
                 function KeybindApi:GetBind()
                     return CurrentKey
                 end
-                
+
                 return KeybindApi
             end
-            
+
             function Section:AddLabel(config)
                 config = config or {}
                 local labelConfig = {
                     Text = config.Text or "Label",
                     Color = config.Color or SOLHub.Theme.TextColor
                 }
-                
+
                 local Label = CreateElement("Frame", {
                     Name = "Label",
                     Parent = SectionContent,
                     BackgroundTransparency = 1,
                     Size = UDim2.new(1, 0, 0, 20)
                 })
-                
+
                 local LabelText = CreateElement("TextLabel", {
                     Name = "Text",
                     Parent = Label,
@@ -2496,23 +2528,23 @@ function SOLHub:CreateWindow(config)
                     TextSize = SOLHub.Configuration.TextSize,
                     TextWrapped = true
                 })
-                
+
                 -- Label API
                 local LabelApi = {}
-                
+
                 function LabelApi:Set(text, color)
                     LabelText.Text = text
                     if color then
                         LabelText.TextColor3 = color
                     end
                 end
-                
+
                 return LabelApi
             end
-            
+
             return Section
         end
-        
+
         -- Select first tab by default
         pcall(function()
             if TabList and TabList.GetChildren and #TabList:GetChildren() > 1 then
@@ -2526,12 +2558,12 @@ function SOLHub:CreateWindow(config)
                 print("Demo: Skipping first tab selection (mock environment)")
             end
         end)
-        
+
         -- Update TabList canvas size
         TabListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             TabList.CanvasSize = UDim2.new(0, 0, 0, TabListLayout.AbsoluteContentSize.Y)
         end)
-        
+
         -- Set initial flag values if config saving is enabled
         if windowConfig.ConfigurationSaving.Enabled then
             -- Load configuration from file
@@ -2539,13 +2571,13 @@ function SOLHub:CreateWindow(config)
                 -- Implementation for configuration loading would go here
                 -- This is just a placeholder - actual implementation would depend on the exploit environment
             end
-            
+
             -- Save configuration to file
             local function SaveConfiguration()
                 -- Implementation for configuration saving would go here
                 -- This is just a placeholder - actual implementation would depend on the exploit environment
             end
-            
+
             -- Auto-save configuration at interval
             if windowConfig.ConfigurationSaving.AutoSave then
                 spawn(function()
@@ -2553,7 +2585,7 @@ function SOLHub:CreateWindow(config)
                     while MainFrame.Parent do
                         SaveConfiguration()
                         wait(windowConfig.ConfigurationSaving.AutoSaveInterval or 10)
-                        
+
                         -- For demo environment, limit iterations
                         if _G.DEMO_MAX_ITERATIONS then
                             iteration = iteration + 1
@@ -2565,26 +2597,26 @@ function SOLHub:CreateWindow(config)
                     end
                 end)
             end
-            
+
             -- Save configuration when UI is closed
             RunService.RenderStepped:Connect(function()
                 if not MainFrame.Parent and windowConfig.ConfigurationSaving.Enabled then
                     SaveConfiguration()
                 end
             end)
-            
+
             -- Load configuration when UI is created
             LoadConfiguration()
         end
-        
+
         if windowConfig.KeySystem then
             -- Implementation for key system would go here
             -- This is just a placeholder - actual implementation would depend on requirements
         end
-        
+
         return Tab
     end
-    
+
     -- Notification system
     function Window:Notify(config)
         config = config or {}
@@ -2595,7 +2627,7 @@ function SOLHub:CreateWindow(config)
             Image = config.Image,
             Actions = config.Actions or {}
         }
-        
+
         -- Create notification container if not exists
         local NotificationContainer = game:GetService("CoreGui"):FindFirstChild("SOLHub_Notifications")
         if not NotificationContainer then
@@ -2605,7 +2637,7 @@ function SOLHub:CreateWindow(config)
                 ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
                 ResetOnSpawn = false
             })
-            
+
             local NotificationLayout = CreateElement("UIListLayout", {
                 Parent = NotificationContainer,
                 FillDirection = Enum.FillDirection.Vertical,
@@ -2614,14 +2646,14 @@ function SOLHub:CreateWindow(config)
                 VerticalAlignment = Enum.VerticalAlignment.Bottom,
                 Padding = UDim.new(0, 10)
             })
-            
+
             local NotificationPadding = CreateElement("UIPadding", {
                 Parent = NotificationContainer,
                 PaddingBottom = UDim.new(0, 10),
                 PaddingRight = UDim.new(0, 10)
             })
         end
-        
+
         -- Create notification
         local Notification = CreateElement("Frame", {
             Name = "Notification",
@@ -2633,12 +2665,12 @@ function SOLHub:CreateWindow(config)
             AnchorPoint = Vector2.new(1, 1),
             ClipsDescendants = true
         })
-        
+
         local NotificationCorner = CreateElement("UICorner", {
             Parent = Notification,
             CornerRadius = UDim.new(0, 5)
         })
-        
+
         local NotificationGlow = CreateElement("ImageLabel", {
             Name = "Glow",
             Parent = Notification,
@@ -2652,7 +2684,7 @@ function SOLHub:CreateWindow(config)
             ScaleType = Enum.ScaleType.Slice,
             SliceCenter = Rect.new(24, 24, 276, 276)
         })
-        
+
         local NotificationTitle = CreateElement("TextLabel", {
             Name = "Title",
             Parent = Notification,
@@ -2665,7 +2697,7 @@ function SOLHub:CreateWindow(config)
             TextSize = 18,
             TextXAlignment = Enum.TextXAlignment.Left
         })
-        
+
         -- Cyberpunk-style neon line under title
         local NotificationLine = CreateElement("Frame", {
             Name = "Line",
@@ -2675,7 +2707,7 @@ function SOLHub:CreateWindow(config)
             Position = UDim2.new(0, 0, 1, 0),
             Size = UDim2.new(0, 30, 0, 1)
         })
-        
+
         local NotificationContent = CreateElement("TextLabel", {
             Name = "Content",
             Parent = Notification,
@@ -2690,7 +2722,7 @@ function SOLHub:CreateWindow(config)
             TextYAlignment = Enum.TextYAlignment.Top,
             TextWrapped = true
         })
-        
+
         -- Add image if provided
         if notificationConfig.Image then
             local NotificationImage = CreateElement("ImageLabel", {
@@ -2701,15 +2733,15 @@ function SOLHub:CreateWindow(config)
                 Size = UDim2.new(0, 30, 0, 30),
                 Image = notificationConfig.Image
             })
-            
+
             NotificationContent.Position = UDim2.new(0, 50, 0, 30)
             NotificationContent.Size = UDim2.new(1, -60, 0, 40)
         end
-        
+
         -- Add actions buttons if provided
         if #notificationConfig.Actions > 0 then
             Notification.Size = UDim2.new(0, 300, 0, 80 + 30)
-            
+
             local ActionsContainer = CreateElement("Frame", {
                 Name = "Actions",
                 Parent = Notification,
@@ -2717,7 +2749,7 @@ function SOLHub:CreateWindow(config)
                 Position = UDim2.new(0, 10, 0, 70),
                 Size = UDim2.new(1, -20, 0, 30)
             })
-            
+
             local ActionsLayout = CreateElement("UIListLayout", {
                 Parent = ActionsContainer,
                 FillDirection = Enum.FillDirection.Horizontal,
@@ -2725,7 +2757,7 @@ function SOLHub:CreateWindow(config)
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Padding = UDim.new(0, 5)
             })
-            
+
             for i, action in ipairs(notificationConfig.Actions) do
                 local ActionButton = CreateElement("TextButton", {
                     Name = "Action" .. i,
@@ -2739,21 +2771,21 @@ function SOLHub:CreateWindow(config)
                     TextSize = 14,
                     AutoButtonColor = false
                 })
-                
+
                 local ActionButtonCorner = CreateElement("UICorner", {
                     Parent = ActionButton,
                     CornerRadius = UDim.new(0, 4)
                 })
-                
+
                 -- Button hover effects
                 ActionButton.MouseEnter:Connect(function()
                     Tween(ActionButton, {BackgroundColor3 = SOLHub.Theme.AccentColor}, 0.2)
                 end)
-                
+
                 ActionButton.MouseLeave:Connect(function()
                     Tween(ActionButton, {BackgroundColor3 = SOLHub.Theme.DarkContrast}, 0.2)
                 end)
-                
+
                 ActionButton.MouseButton1Click:Connect(function()
                     if action.Callback then
                         task.spawn(action.Callback)
@@ -2765,10 +2797,10 @@ function SOLHub:CreateWindow(config)
                 end)
             end
         end
-        
+
         -- Animate notification
         Tween(Notification, {Position = UDim2.new(1, 0, 1, Notification.AbsolutePosition.Y)}, 0.5)
-        
+
         -- Auto-close notification after duration
         spawn(function()
             wait(notificationConfig.Duration)
@@ -2779,10 +2811,10 @@ function SOLHub:CreateWindow(config)
                 Notification:Destroy()
             end
         end)
-        
+
         -- Return controls for the notification
         local NotificationObj = {}
-        
+
         function NotificationObj:Close()
             if Notification.Parent then
                 Tween(Notification, {Position = UDim2.new(1, 300, 1, Notification.AbsolutePosition.Y)}, 0.5)
@@ -2791,10 +2823,10 @@ function SOLHub:CreateWindow(config)
                 Notification:Destroy()
             end
         end
-        
+
         return NotificationObj
     end
-    
+
     return Window
 end
 
@@ -2841,12 +2873,12 @@ end
 -- Loading screen functionality
 function SOLHub:CreateLoader(config)
     config = config or {}
-    
+
     -- Merge config with default LoaderData
     for k, v in pairs(config) do
         self.LoaderData[k] = v
     end
-    
+
     -- Create loader UI
     local LoaderGui
     if syn and syn.protect_gui then
@@ -2860,11 +2892,11 @@ function SOLHub:CreateLoader(config)
         LoaderGui = Instance.new("ScreenGui")
         LoaderGui.Parent = CoreGui
     end
-    
+
     LoaderGui.Name = "SOLHub_Loader"
     LoaderGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     LoaderGui.ResetOnSpawn = false
-    
+
     -- Create blur effect if enabled
     local BlurEffect
     if self.LoaderData.BlurBackground then
@@ -2873,7 +2905,7 @@ function SOLHub:CreateLoader(config)
         BlurEffect.Parent = game:GetService("Lighting")
         Tween(BlurEffect, {Size = 20}, 1)
     end
-    
+
     -- Main loader frame
     local LoaderFrame = CreateElement("Frame", {
         Name = "LoaderFrame",
@@ -2885,12 +2917,12 @@ function SOLHub:CreateLoader(config)
         ClipsDescendants = true,
         AnchorPoint = Vector2.new(0.5, 0.5)
     })
-    
+
     local UICornerLoader = CreateElement("UICorner", {
         Parent = LoaderFrame,
         CornerRadius = UDim.new(0, self.Configuration.LoaderCorner)
     })
-    
+
     -- Hexagonal background pattern (cyberpunk style)
     if self.LoaderData.UseHexagonalPattern then
         local HexPattern = CreateElement("ImageLabel", {
@@ -2905,7 +2937,7 @@ function SOLHub:CreateLoader(config)
             ScaleType = Enum.ScaleType.Tile,
             TileSize = UDim2.new(0, 50, 0, 50)
         })
-        
+
         -- Animate the hex pattern
         spawn(function()
             local elapsed = 0
@@ -2917,7 +2949,7 @@ function SOLHub:CreateLoader(config)
                     0, math.cos(elapsed * 0.5) * 10
                 )
                 wait(0.01)
-                
+
                 -- For demo environment, limit iterations
                 if _G.DEMO_MAX_ITERATIONS then
                     iteration = iteration + 1
@@ -2928,7 +2960,7 @@ function SOLHub:CreateLoader(config)
             end
         end)
     end
-    
+
     -- Cyberpunk-style neon glow
     local LoaderGlow = CreateElement("ImageLabel", {
         Name = "LoaderGlow",
@@ -2941,7 +2973,7 @@ function SOLHub:CreateLoader(config)
         ImageTransparency = 0.5,
         ZIndex = 0
     })
-    
+
     -- Animated neon border
     local BorderTop = CreateElement("Frame", {
         Name = "BorderTop",
@@ -2952,7 +2984,7 @@ function SOLHub:CreateLoader(config)
         Size = UDim2.new(1, 0, 0, 1),
         ZIndex = 2
     })
-    
+
     local BorderRight = CreateElement("Frame", {
         Name = "BorderRight",
         Parent = LoaderFrame,
@@ -2962,7 +2994,7 @@ function SOLHub:CreateLoader(config)
         Size = UDim2.new(0, 1, 1, 0),
         ZIndex = 2
     })
-    
+
     local BorderBottom = CreateElement("Frame", {
         Name = "BorderBottom",
         Parent = LoaderFrame,
@@ -2972,7 +3004,7 @@ function SOLHub:CreateLoader(config)
         Size = UDim2.new(1, 0, 0, 1),
         ZIndex = 2
     })
-    
+
     local BorderLeft = CreateElement("Frame", {
         Name = "BorderLeft",
         Parent = LoaderFrame,
@@ -2982,7 +3014,7 @@ function SOLHub:CreateLoader(config)
         Size = UDim2.new(0, 1, 1, 0),
         ZIndex = 2
     })
-    
+
     -- Animate the border colors
     spawn(function()
         local iteration = 0
@@ -2990,15 +3022,15 @@ function SOLHub:CreateLoader(config)
             local hue = tick() % 5 / 5
             local color1 = Color3.fromHSV(hue, 0.8, 1)
             local color2 = Color3.fromHSV((hue + 0.5) % 1, 0.8, 1)
-            
+
             Tween(BorderTop, {BackgroundColor3 = color1}, 1)
             Tween(BorderBottom, {BackgroundColor3 = color1}, 1)
             Tween(BorderLeft, {BackgroundColor3 = color2}, 1)
             Tween(BorderRight, {BackgroundColor3 = color2}, 1)
             Tween(LoaderGlow, {ImageColor3 = color1}, 1)
-            
+
             wait(0.5)
-            
+
             -- For demo environment, limit iterations
             if _G.DEMO_MAX_ITERATIONS then
                 iteration = iteration + 1
@@ -3008,7 +3040,7 @@ function SOLHub:CreateLoader(config)
             end
         end
     end)
-    
+
     -- Title
     local Title = CreateElement("TextLabel", {
         Name = "Title",
@@ -3022,7 +3054,7 @@ function SOLHub:CreateLoader(config)
         TextSize = 24,
         TextXAlignment = Enum.TextXAlignment.Left
     })
-    
+
     -- Subtitle
     local SubTitle = CreateElement("TextLabel", {
         Name = "SubTitle",
@@ -3036,7 +3068,7 @@ function SOLHub:CreateLoader(config)
         TextSize = 16,
         TextXAlignment = Enum.TextXAlignment.Left
     })
-    
+
     -- Loading icon (spinner or custom)
     local Icon
     if self.LoaderData.CustomIcon then
@@ -3058,7 +3090,7 @@ function SOLHub:CreateLoader(config)
             Position = UDim2.new(0.5, -25, 0.5, -25),
             Size = UDim2.new(0, 50, 0, 50)
         })
-        
+
         local SpinnerOuter = CreateElement("Frame", {
             Name = "SpinnerOuter",
             Parent = Icon,
@@ -3067,7 +3099,7 @@ function SOLHub:CreateLoader(config)
             Position = UDim2.new(0.5, 0, 0.5, 0),
             Size = UDim2.new(1, 0, 1, 0)
         })
-        
+
         -- Create spinning elements
         for i = 1, 3 do
             local spinElement = CreateElement("Frame", {
@@ -3080,12 +3112,12 @@ function SOLHub:CreateLoader(config)
                 Rotation = i * 45,
                 Size = UDim2.new(0, 35 - (i * 8), 0, 2)
             })
-            
+
             local UICornerSpin = CreateElement("UICorner", {
                 Parent = spinElement,
                 CornerRadius = UDim.new(1, 0)
             })
-            
+
             local glowSpin = CreateElement("ImageLabel", {
                 Name = "Glow",
                 Parent = spinElement,
@@ -3097,7 +3129,7 @@ function SOLHub:CreateLoader(config)
                 ImageTransparency = 0.5
             })
         end
-        
+
         -- Animate the spinner
         spawn(function()
             local rotation = 0
@@ -3107,10 +3139,10 @@ function SOLHub:CreateLoader(config)
                 if SpinnerOuter and SpinnerOuter.Rotation then
                     SpinnerOuter.Rotation = rotation
                 end
-                
+
                 local hue = tick() % 5 / 5
                 local color = Color3.fromHSV(hue, 0.8, 1)
-                
+
                 -- Store references to spin elements for better mock environment support
                 local spinElements = {}
                 if SpinnerOuter and SpinnerOuter.Children then
@@ -3120,10 +3152,10 @@ function SOLHub:CreateLoader(config)
                         end
                     end
                 end
-                
+
                 for i, spinElement in ipairs(spinElements) do
                     spinElement.BackgroundColor3 = Color3.fromHSV((hue + (i * 0.1)) % 1, 0.8, 1)
-                    
+
                     -- Find the glow using Children table for better mock support
                     if spinElement.Children then
                         for _, child in pairs(spinElement.Children) do
@@ -3134,9 +3166,9 @@ function SOLHub:CreateLoader(config)
                         end
                     end
                 end
-                
+
                 wait(0.01)
-                
+
                 -- For demo environment, limit iterations
                 if _G.DEMO_MAX_ITERATIONS then
                     iteration = iteration + 1
@@ -3147,7 +3179,7 @@ function SOLHub:CreateLoader(config)
             end
         end)
     end
-    
+
     -- Loading text
     local LoadingText = CreateElement("TextLabel", {
         Name = "LoadingText",
@@ -3160,10 +3192,10 @@ function SOLHub:CreateLoader(config)
         TextColor3 = self.Theme.LoaderText,
         TextSize = 16
     })
-    
+
     -- Progress bar
     local ProgressBarContainer, ProgressBar, ProgressBarFill
-    
+
     if self.LoaderData.ShowProgressBar then
         ProgressBarContainer = CreateElement("Frame", {
             Name = "ProgressBarContainer",
@@ -3173,12 +3205,12 @@ function SOLHub:CreateLoader(config)
             Position = UDim2.new(0, 20, 0.9, 0),
             Size = UDim2.new(1, -40, 0, self.Configuration.LoaderProgressHeight)
         })
-        
+
         local UICornerProgressContainer = CreateElement("UICorner", {
             Parent = ProgressBarContainer,
             CornerRadius = UDim.new(1, 0)
         })
-        
+
         ProgressBarFill = CreateElement("Frame", {
             Name = "ProgressBarFill",
             Parent = ProgressBarContainer,
@@ -3186,12 +3218,12 @@ function SOLHub:CreateLoader(config)
             BorderSizePixel = 0,
             Size = UDim2.new(0, 0, 1, 0)
         })
-        
+
         local UICornerProgressFill = CreateElement("UICorner", {
             Parent = ProgressBarFill,
             CornerRadius = UDim.new(1, 0)
         })
-        
+
         if self.LoaderData.ProgressGradient then
             local ProgressGradient = CreateElement("UIGradient", {
                 Parent = ProgressBarFill,
@@ -3201,7 +3233,7 @@ function SOLHub:CreateLoader(config)
                 }),
                 Rotation = 90
             })
-            
+
             -- Animate the gradient
             spawn(function()
                 local pos = 0
@@ -3212,7 +3244,7 @@ function SOLHub:CreateLoader(config)
                         ProgressGradient.Offset = Vector2.new(pos, 0)
                     end
                     wait(0.01)
-                    
+
                     -- For demo environment, limit iterations
                     if _G.DEMO_MAX_ITERATIONS then
                         iteration = iteration + 1
@@ -3223,7 +3255,7 @@ function SOLHub:CreateLoader(config)
                 end
             end)
         end
-        
+
         -- Glow effect on progress bar
         local ProgressGlow = CreateElement("ImageLabel", {
             Name = "ProgressGlow",
@@ -3236,72 +3268,72 @@ function SOLHub:CreateLoader(config)
             ImageTransparency = 0.7
         })
     end
-    
+
     -- Methods for the loader
     local LoaderAPI = {}
-    
+
     -- Set progress method (0-100)
     function LoaderAPI:SetProgress(progress)
         -- Store the progress on both the API and the main SOLHub
         local currentProgress = math.clamp(progress, 0, 100)
         self.CurrentProgress = currentProgress
         SOLHub.LoaderData.CurrentProgress = currentProgress
-        
+
         if ProgressBarFill then
             Tween(ProgressBarFill, {Size = UDim2.new(currentProgress/100, 0, 1, 0)}, 0.3)
         end
-        
+
         return LoaderAPI
     end
-    
+
     -- Set loading text
     function LoaderAPI:SetText(text)
         -- Store the text on both the API and the main SOLHub
         self.LoadingText = text
         SOLHub.LoaderData.LoadingText = text
-        
+
         if LoadingText then
             LoadingText.Text = text
         end
-        
+
         return LoaderAPI
     end
-    
+
     -- Finish loading and close the loader
     function LoaderAPI:Finish()
         -- Call the close callback if provided
         local closeCallback = nil
-        
+
         if self.CloseCallback and type(self.CloseCallback) == "function" then
             closeCallback = self.CloseCallback
         elseif SOLHub.LoaderData and SOLHub.LoaderData.CloseCallback and type(SOLHub.LoaderData.CloseCallback) == "function" then
             closeCallback = SOLHub.LoaderData.CloseCallback
         end
-        
+
         if closeCallback then
             closeCallback()
         end
-        
+
         -- Fade out the loader
         Tween(LoaderFrame, {BackgroundTransparency = 1}, 0.5)
         Tween(LoaderGlow, {ImageTransparency = 1}, 0.5)
-        
+
         -- Get all descendants manually for better mock compatibility
         local function getAllChildren(parent, result)
             result = result or {}
-            
+
             if parent and parent.Children then
                 for _, child in pairs(parent.Children) do
                     table.insert(result, child)
                     getAllChildren(child, result)
                 end
             end
-            
+
             return result
         end
-        
+
         local allDescendants = getAllChildren(LoaderFrame)
-        
+
         -- Fade out all elements
         for _, child in pairs(allDescendants) do
             -- Check if it's a TextLabel
@@ -3315,7 +3347,7 @@ function SOLHub:CreateLoader(config)
                 Tween(child, {ImageTransparency = 1}, 0.5)
             end
         end
-        
+
         -- Remove blur effect
         if BlurEffect then
             Tween(BlurEffect, {Size = 0}, 0.5)
@@ -3324,54 +3356,54 @@ function SOLHub:CreateLoader(config)
                 BlurEffect:Destroy()
             end)
         end
-        
+
         -- Destroy the loader after animation
         spawn(function()
             wait(0.5)
             LoaderGui:Destroy()
         end)
-        
+
         return nil
     end
-    
+
     -- Auto-finish after duration
     local duration = nil
-    
+
     -- Check if the duration is specified in the LoaderAPI or in SOLHub
     if self.LoaderData and self.LoaderData.LoadingDuration and self.LoaderData.LoadingDuration > 0 then
         duration = self.LoaderData.LoadingDuration
     elseif SOLHub.LoaderData and SOLHub.LoaderData.LoadingDuration and SOLHub.LoaderData.LoadingDuration > 0 then
         duration = SOLHub.LoaderData.LoadingDuration
     end
-    
+
     if duration then
         spawn(function()
             local steps = 100
             local interval = duration / steps
-            
+
             for i = 1, steps do
                 LoaderAPI:SetProgress(i)
                 wait(interval)
             end
-            
+
             LoaderAPI:Finish()
         end)
     end
-    
+
     -- Immediately set progress to current value
     local currentProgress = 0
-    
+
     -- Check if the progress is specified in the LoaderAPI or in SOLHub
     if self.CurrentProgress and self.CurrentProgress > 0 then
         currentProgress = self.CurrentProgress
     elseif SOLHub.LoaderData and SOLHub.LoaderData.CurrentProgress and SOLHub.LoaderData.CurrentProgress > 0 then
         currentProgress = SOLHub.LoaderData.CurrentProgress
     end
-    
+
     if currentProgress > 0 and ProgressBarFill then
         ProgressBarFill.Size = UDim2.new(currentProgress/100, 0, 1, 0)
     end
-    
+
     -- Return the loader API
     return LoaderAPI
 end
